@@ -1,0 +1,25 @@
+package com.example.chillmate.model
+
+data class WeatherData(
+    val latitude: Double,
+    val longitude: Double,
+    val current: CurrentWeather,
+    val current_units: WeatherUnits
+)
+
+data class CurrentWeather(
+    val time: String,
+    val temperature_2m: Double,
+    val precipitation: Double,
+    val weather_code: Int,
+    val wind_speed_10m: Double,
+    val relative_humidity_2m: Int,
+    val rain: Double
+)
+
+data class WeatherUnits(
+    val temperature_2m: String,
+    val precipitation: String,
+    val wind_speed_10m: String,
+    val relative_humidity_2m: String
+)
