@@ -24,4 +24,7 @@
 | Nadeesha           | t3rana00         | Developer/Designer             |
 | Hasitha            | hasiya89         | Developer/Tester               |
 
+## Wireframe
 
+![Home Screen Wireframe](docs/Chillmate%201.png)
+![Home Screen Wireframe](docs/Chillmate%202.png)
