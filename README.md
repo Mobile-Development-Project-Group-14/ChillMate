@@ -26,5 +26,6 @@
 
 ## Wireframe
 
-![Home Screen Wireframe](docs/Chillmate%201.png)
-![Home Screen Wireframe](docs/Chillmate%202.png)
+![Home Screen Wireframe](docs/Chillmate readme2.jpeg)
+![Home Screen Wireframe](docs/Chillmate readme1.jpeg)
+
