@@ -33,21 +33,26 @@ import com.example.chillmate.viewmodel.WeatherViewModel
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: WeatherViewModel = viewModel(),
-    navController: NavController // Add NavController for navigation
+    navController: NavController, // Add NavController for navigation
+    location: Pair<Double, Double>? // Add location parameter
 ) {
     when (val state = viewModel.weatherUiState) {
         is WeatherUiState.Loading -> LoadingScreen()
-        is WeatherUiState.Success -> WeatherContent(
-            modifier = modifier,
-            data = state.data,
-            navController = navController // Pass NavController to WeatherContent
-        )
+        is WeatherUiState.Success -> location?.let {
+            WeatherContent(
+                modifier = modifier,
+                data = state.data,
+                navController = navController,
+                location = location
+
+            )
+        }
         is WeatherUiState.Error -> ErrorScreen()
     }
 }
 
 @Composable
-fun WeatherContent(modifier: Modifier, data: WeatherData, navController: NavController) {
+fun WeatherContent(modifier: Modifier, data: WeatherData, navController: NavController, location: Pair<Double, Double>) {
     // Cool gradient for cold temperatures (customize colors as needed)
     val gradientBrush = Brush.verticalGradient(
         colors = listOf(
@@ -97,6 +102,12 @@ fun WeatherContent(modifier: Modifier, data: WeatherData, navController: NavCont
                 label = "Precipitation",
                 value = "${data.current.precipitation}${data.current_units.precipitation}",
                 textColor = Color.White
+            )
+            // print location
+            Text(
+                text = "Location: ${location.first}, ${location.second}",
+                style = MaterialTheme.typography.titleMedium,
+                color = Color.White
             )
 
             // Add Buttons for Navigation
