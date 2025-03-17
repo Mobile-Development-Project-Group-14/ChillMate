@@ -10,8 +10,8 @@ import kotlinx.coroutines.launch
 
 sealed interface WeatherUiState {
     data class Success(val data: WeatherData) : WeatherUiState
-    object Error : WeatherUiState
-    object Loading : WeatherUiState
+    data object Error : WeatherUiState
+    data object Loading : WeatherUiState
 }
 
 class WeatherViewModel : ViewModel() {

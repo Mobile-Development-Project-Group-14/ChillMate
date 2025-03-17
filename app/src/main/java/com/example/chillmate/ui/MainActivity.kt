@@ -15,8 +15,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.example.chillmate.ui.screens.WeatherScreen
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.chillmate.ui.screens.HomeScreen
 import com.example.chillmate.ui.theme.ChillMateTheme
+import com.example.chillmate.ui.screens.OutfitGuideScreen
+import com.example.chillmate.ui.screens.TodayActivityScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,9 +30,29 @@ class MainActivity : ComponentActivity() {
         setContent {
             ChillMateTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    WeatherScreen()
+                    ChillMate()
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun ChillMate() {
+    val navController = rememberNavController()
+
+    NavHost(
+        navController = navController,
+        startDestination = "home"
+    ) {
+        composable("home") {
+            HomeScreen(navController = navController)
+        }
+        composable("outfitGuide") {
+            OutfitGuideScreen()
+        }
+        composable("todayActivity") {
+            TodayActivityScreen()
         }
     }
 }
