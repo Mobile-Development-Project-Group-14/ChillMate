@@ -5,9 +5,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.chillmate.model.WeatherData
 import com.example.chillmate.ui.ErrorScreen
 import com.example.chillmate.ui.LoadingScreen
@@ -24,22 +30,24 @@ import com.example.chillmate.viewmodel.WeatherUiState
 import com.example.chillmate.viewmodel.WeatherViewModel
 
 @Composable
-fun WeatherScreen(
+fun HomeScreen(
     modifier: Modifier = Modifier,
-    viewModel: WeatherViewModel = viewModel()
+    viewModel: WeatherViewModel = viewModel(),
+    navController: NavController // Add NavController for navigation
 ) {
     when (val state = viewModel.weatherUiState) {
         is WeatherUiState.Loading -> LoadingScreen()
         is WeatherUiState.Success -> WeatherContent(
             modifier = modifier,
-            data = state.data
+            data = state.data,
+            navController = navController // Pass NavController to WeatherContent
         )
         is WeatherUiState.Error -> ErrorScreen()
     }
 }
 
 @Composable
-fun WeatherContent(modifier: Modifier, data: WeatherData) {
+fun WeatherContent(modifier: Modifier, data: WeatherData, navController: NavController) {
     // Cool gradient for cold temperatures (customize colors as needed)
     val gradientBrush = Brush.verticalGradient(
         colors = listOf(
@@ -90,9 +98,40 @@ fun WeatherContent(modifier: Modifier, data: WeatherData) {
                 value = "${data.current.precipitation}${data.current_units.precipitation}",
                 textColor = Color.White
             )
+
+            // Add Buttons for Navigation
+            Spacer(modifier = Modifier.height(24.dp))
+            Button(
+                onClick = { navController.navigate("outfitGuide") }, // Navigate to OutfitGuide
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White,
+                    contentColor = Color(0xFF4B6CB7)
+                )
+            ) {
+                Text("See Full Outfit Guide")
+            }
+
+            Button(
+                onClick = { navController.navigate("todayActivity") }, // Navigate to TodayActivity
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White,
+                    contentColor = Color(0xFF4B6CB7)
+                )
+            ) {
+                Text("What to Do Today")
+            }
         }
     }
 }
+
 
 @Composable
 fun WeatherInfoItem(label: String, value: String, textColor: Color) {
