@@ -21,7 +21,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.chillmate.model.WeatherData
 import com.example.chillmate.ui.ErrorScreen
@@ -29,30 +28,30 @@ import com.example.chillmate.ui.LoadingScreen
 import com.example.chillmate.viewmodel.WeatherUiState
 import com.example.chillmate.viewmodel.WeatherViewModel
 
+
 @Composable
 fun HomeScreen(
-    modifier: Modifier = Modifier,
-    viewModel: WeatherViewModel = viewModel(),
-    navController: NavController, // Add NavController for navigation
-    location: Pair<Double, Double>? // Add location parameter
+    navController: NavController,
+    viewModel: WeatherViewModel
 ) {
     when (val state = viewModel.weatherUiState) {
-        is WeatherUiState.Loading -> LoadingScreen()
-        is WeatherUiState.Success -> location?.let {
-            WeatherContent(
-                modifier = modifier,
-                data = state.data,
-                navController = navController,
-                location = location
-
-            )
-        }
-        is WeatherUiState.Error -> ErrorScreen()
+        WeatherUiState.Loading -> LoadingScreen()
+        is WeatherUiState.Success -> WeatherContent(
+            data = state.data,
+            location = viewModel.currentLocation,
+            navController = navController
+        )
+        WeatherUiState.Error -> ErrorScreen()
     }
 }
 
 @Composable
-fun WeatherContent(modifier: Modifier, data: WeatherData, navController: NavController, location: Pair<Double, Double>) {
+fun WeatherContent(
+    modifier: Modifier = Modifier,  // Added default value here
+    data: WeatherData,
+    navController: NavController,
+    location: Pair<Double, Double>
+) {
     // Cool gradient for cold temperatures (customize colors as needed)
     val gradientBrush = Brush.verticalGradient(
         colors = listOf(
