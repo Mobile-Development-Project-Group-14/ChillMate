@@ -1,7 +1,6 @@
 package com.example.chillmate.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,68 +25,18 @@ import androidx.compose.ui.unit.sp
 import com.example.chillmate.model.Activity
 import com.example.chillmate.model.WeatherCondition
 import com.example.chillmate.ui.theme.ChillMateTheme
+import java.util.Locale
 
 
 //Hardcoded data for weather data
 val todayWeather = WeatherCondition(
-    type = "Sunny",
-    icon = "☀️",
-    temperature = 28
+    location = "Oulu", //City name
+    type = "snow",  //Weather condition
+    icon = "❄️", //Weather icon
+    temperature = -8, //Temperature in Celsius
+    isDay = true //Daytime
 )
 
-//Hard coded list of activities based on weather
-val activities = listOf(
-    Activity(
-        name = "Swimming",
-        description = "Swimming is a great way to cool off on a hot day.",
-        icon = "🏊"
-    ),
-    Activity(
-        name = "Picnic",
-        description = "Enjoy a picnic in the park with friends and family.",
-        icon = "🧺"
-    ),
-    Activity(
-        name = "Hiking",
-        description = "Explore the great outdoors and enjoy the fresh air.",
-        icon = "🥾"
-    ),
-    Activity(
-        name = "Cycling",
-        description = "Go for a bike ride and enjoy the scenery.",
-        icon = "🚴"
-    ),
-    Activity(
-        name = "Running",
-        description = "Go for a run and get some exercise.",
-        icon = "🏃"
-    ),
-    Activity(
-        name = "Reading",
-        description = "Relax with a good book and enjoy the sunshine.",
-        icon = "📚"
-    ),
-    Activity(
-        name = "Gardening",
-        description = "Spend time in the garden and tend to your plants.",
-        icon = "🌻"
-    ),
-    Activity(
-        name = "Cooking",
-        description = "Try out a new recipe and cook a delicious meal.",
-        icon = "🍳"
-    ),
-    Activity(
-        name = "Yoga",
-        description = "Practice yoga and relax your mind and body.",
-        icon = "🧘"
-    ),
-    Activity(
-        name = "Painting",
-        description = "Get creative and paint a masterpiece.",
-        icon = "🎨"
-    )
-)
 
 
 @Composable
@@ -105,7 +54,12 @@ fun TodayActivityScreen() {
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                //Display list of activities
+
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                //Display list of activities based on weather
+                val activities = getActivitySuggestions(todayWeather)
                 ActivityList(activities = activities)
             }
         }
@@ -126,18 +80,69 @@ fun WeatherInfo(weather: WeatherCondition) {
         )
 
         Spacer(modifier = Modifier.height(8.dp))
+        //Display Location
         Text(
-            text = "${weather.temperature}°C",
-            fontSize = 32.sp,
+            text = weather.location,
+            fontSize = 24.sp,
             fontWeight = FontWeight.Bold
         )
 
         Spacer(modifier = Modifier.height(8.dp))
+        //Display Temperature
+        Text(
+            text = "${weather.temperature}°C",
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Bold
+
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+        //Display Weather Condition
         Text(
             text = weather.type,
             fontSize = 24.sp,
             color = Color.Gray
         )
+
+        Spacer(modifier = Modifier.height(8.dp))
+        //Display Day/Night
+        Text(
+            text = if(weather.isDay) "Day" else "Night",
+            fontSize = 24.sp,
+            color = Color.Gray
+        )
+    }
+}
+
+@Composable
+fun getActivitySuggestions(weather: WeatherCondition) : List<Activity> {
+    return when(weather.type.lowercase(Locale.ROOT)) {
+        "sunny" -> listOf(
+            Activity("Swimming", "Swimming is a great way to cool off on a hot day.", "🏊"),
+            Activity("Picnic", "Enjoy a picnic in the park with friends and family.", "🧺"),
+            Activity("Cycling", "Go for a bike ride and enjoy the scenery.", "🚴")
+        )
+        "rain" -> listOf(
+            Activity("Indoor Yoga", "Practice yoga and relax your mind and body.", "🧘"),
+            Activity("Reading", "Relax with a good book and enjoy the rain.", "📚"),
+            Activity("Cooking", "Try out a new recipe and cook a delicious meal.", "🍳")
+        )
+        "snow" -> listOf(
+            Activity("Skiing", "Hit the slopes and enjoy the snow.", "⛷️"),
+            Activity("Snowball Fight", "Have fun with friends in the snow.", "❄️"),
+            Activity("Ice Skating", "Go ice skating and enjoy the winter weather.", "⛸️"),
+            Activity("Sauna Bath", "Relax in a warm sauna and unwind.", "🧖"),
+            Activity("Hot Chocolate", "Warm up with a cup of hot chocolate.", "☕")
+        )
+
+        else -> listOf(
+            Activity("Hiking", "Explore the great outdoors and enjoy the fresh air.", "🥾"),
+            Activity("Running", "Go for a run and get some exercise.", "🏃"),
+            Activity("Gardening", "Spend time in the garden and tend to your plants.", "🌻")
+        )
+
+
+
     }
 }
 
@@ -154,7 +159,9 @@ fun ActivityList(activities: List<Activity>) {
 @Composable
 fun ActivityCard(activity: Activity) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
