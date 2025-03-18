@@ -1,9 +1,7 @@
 package com.example.chillmate.model
 
-import android.accounts.AuthenticatorDescription
-import android.graphics.drawable.Icon
-import android.health.connect.datatypes.units.Temperature
-import com.example.chillmate.R
+
+
 
 //Data class for weather conditions
 data class WeatherCondition(
