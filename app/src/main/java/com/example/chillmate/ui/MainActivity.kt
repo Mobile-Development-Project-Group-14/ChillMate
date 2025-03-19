@@ -85,7 +85,8 @@ fun ChillMateApp(locationPermissionLauncher: androidx.activity.result.ActivityRe
             )
         }
         composable("outfitGuide") {
-            OutfitGuideScreen()
+            OutfitGuideScreen(navController = navController, weatherViewModel = viewModel)
+
         }
         composable("todayActivity") {
             TodayActivityScreen()
