@@ -29,7 +29,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.chillmate.R
 import com.example.chillmate.model.WeatherData
 import com.example.chillmate.ui.ErrorScreen
 import com.example.chillmate.ui.LoadingScreen
@@ -47,7 +46,8 @@ fun HomeScreen(
         is WeatherUiState.Success -> WeatherContent(
             data = state.data,
             location = viewModel.currentLocation,
-            navController = navController
+            navController = navController,
+            viewModel = viewModel
         )
         WeatherUiState.Error -> ErrorScreen()
     }
@@ -58,7 +58,8 @@ fun WeatherContent(
     modifier: Modifier = Modifier,  // Added default value here
     data: WeatherData,
     navController: NavController,
-    location: Pair<Double, Double>
+    location: Pair<Double, Double>,
+    viewModel: WeatherViewModel
 ) {
     // Cool gradient for cold temperatures (customize colors as needed)
     val gradientBrush = Brush.verticalGradient(
@@ -120,18 +121,18 @@ fun WeatherContent(
 
             //add image for weather condition
             Image(
-                painter = painterResource(id = R.drawable.clidminus10), // Load the image
+                painter = painterResource(id = viewModel.currentOutfitImage), // Load the image
                 contentDescription = "Weather Condition Image", // Accessibility description
                 modifier = Modifier
-                    .fillMaxWidth(0.5f) // Half of the screen width
-                    .fillMaxHeight(0.8f)
-                    .align(Alignment.CenterHorizontally)
+                    .fillMaxWidth(0.4f) // Half of the screen width
+                    .fillMaxHeight(0.4f)
+                    .align(Alignment.CenterHorizontally) // Center the image
                     .padding(vertical = 8.dp) // Add padding around the image
                     .clip(RoundedCornerShape(16.dp))
                     .clickable { // Make the image clickable
                         navController.navigate("outfitGuide") // Navigate to Outfit Guide
                     }, // Rounded corners
-                contentScale = ContentScale.Crop, // Adjust image scaling
+                contentScale = ContentScale.Fit // Adjust image scaling
             )
 
             // Add Buttons for Navigation
