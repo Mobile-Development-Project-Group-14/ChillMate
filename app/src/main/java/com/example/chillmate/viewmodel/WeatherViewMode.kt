@@ -1,11 +1,15 @@
 package com.example.chillmate.viewmodel
 
+import WeatherApiService
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.chillmate.R
 import com.example.chillmate.model.WeatherData
+import com.example.chillmate.model.getOutfitImageForTemperature
 import kotlinx.coroutines.launch
 
 sealed interface WeatherUiState {
@@ -22,6 +26,12 @@ class WeatherViewModel : ViewModel() {
 
     var currentLocation by mutableStateOf(defaultLocation)
         private set
+    var currentOutfitImage by mutableIntStateOf(R.drawable.mild) // Default image
+        private set
+
+    private fun updateOutfitImage(temperature: Double) {
+        currentOutfitImage = getOutfitImageForTemperature(temperature)
+    }
 
     init {
         fetchWeatherData() // Initialize with default location
@@ -42,6 +52,7 @@ class WeatherViewModel : ViewModel() {
                     current = "temperature_2m,precipitation,weather_code,wind_speed_10m,relative_humidity_2m,rain"
                 )
                 weatherUiState = WeatherUiState.Success(response)
+                updateOutfitImage(response.current.temperature_2m)
             } catch (e: Exception) {
                 weatherUiState = WeatherUiState.Error
             }
