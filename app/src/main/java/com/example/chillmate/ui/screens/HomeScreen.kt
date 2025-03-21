@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -19,6 +20,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,12 +31,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.example.chillmate.R
 import com.example.chillmate.model.WeatherData
 import com.example.chillmate.ui.ErrorScreen
 import com.example.chillmate.ui.LoadingScreen
 import com.example.chillmate.viewmodel.WeatherUiState
 import com.example.chillmate.viewmodel.WeatherViewModel
-
 
 @Composable
 fun HomeScreen(
@@ -53,22 +59,48 @@ fun HomeScreen(
     }
 }
 
+// Function to get the appropriate Lottie animation based on weather conditions
+fun getWeatherAnimation(weatherData: WeatherData, isDay: Boolean): Int {
+    return when {
+        weatherData.current.precipitation > 0 -> {
+            if (isDay) R.raw.day_rain else R.raw.night_rain
+        }
+        weatherData.current.snowfall > 0 -> {
+            if (isDay) R.raw.day_snow else R.raw.night_snow
+        }
+        weatherData.current.cloud_cover > 50 -> R.raw.cloudy
+        else -> R.raw.clear_sky // Default animation for clear weather
+    }
+}
+
 @Composable
 fun WeatherContent(
-    modifier: Modifier = Modifier,  // Added default value here
+    modifier: Modifier = Modifier,
     data: WeatherData,
     navController: NavController,
     location: Pair<Double, Double>,
     viewModel: WeatherViewModel
 ) {
-    // Cool gradient for cold temperatures (customize colors as needed)
     val gradientBrush = Brush.verticalGradient(
         colors = listOf(
-            Color(0xFF6B8DD6),  // Light blue
-            Color(0xFF4B6CB7),  // Medium blue
+            Color(0xFFC0DEFF),  // Light blue
+            Color(0xFF74B6FF),  // Medium blue
+            Color(0xFF419BFF)   // Dark blue
+
         ),
         startY = 0f,
         endY = 1000f
+    )
+
+    // Determine if it's day or night based on the API data
+    val isDay = data.current.is_day == 1
+
+    // Get the appropriate Lottie animation based on weather conditions
+    val animationResId = getWeatherAnimation(data, isDay)
+
+    // Load Lottie composition
+    val composition by rememberLottieComposition(
+        spec = LottieCompositionSpec.RawRes(animationResId)
     )
 
     Box(
@@ -78,48 +110,51 @@ fun WeatherContent(
     ) {
         Column(
             modifier = modifier
-                .padding(top = 24.dp)  // Space for future top bar
+                .padding(top = 24.dp)
                 .padding(16.dp)
-                .verticalScroll(rememberScrollState()), // Enable vertical scrolling
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+
             Text(
-                text = "Current Weather",
+                text = "Oulu/Toppila", // Hardcoded location
                 style = MaterialTheme.typography.headlineMedium,
                 color = Color.White
             )
+            // Top Row: Temperature and Weather Animation
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                // Left Column: Temperature and Apparent Temperature
+                Column {
+                    Text(
+                        text = "${data.current.temperature_2m}${data.current_units.temperature_2m}",
+                        style = MaterialTheme.typography.displayLarge,
+                        color = Color.White
+                    )
+                    Text(
+                        text = "Feels like ${data.current.apparent_temperature}${data.current_units.temperature_2m}",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.White
+                    )
+                }
 
-            WeatherInfoItem(
-                label = "Temperature",
-                value = "${data.current.temperature_2m}${data.current_units.temperature_2m}",
-                textColor = Color.White
-            )
+                // Right Column: Weather Animation
+                LottieAnimation(
+                    composition = composition,
+                    iterations = LottieConstants.IterateForever,
+                    modifier = Modifier
+                        .size(100.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .clickable {
+                            navController.navigate("outfitGuide")
+                        },
+                    contentScale = ContentScale.Fit
+                )
+            }
 
-            WeatherInfoItem(
-                label = "Humidity",
-                value = "${data.current.relative_humidity_2m}${data.current_units.relative_humidity_2m}",
-                textColor = Color.White
-            )
-
-            WeatherInfoItem(
-                label = "Wind Speed",
-                value = "${data.current.wind_speed_10m}${data.current_units.wind_speed_10m}",
-                textColor = Color.White
-            )
-
-            WeatherInfoItem(
-                label = "Precipitation",
-                value = "${data.current.precipitation}${data.current_units.precipitation}",
-                textColor = Color.White
-            )
-            // print location
-            Text(
-                text = "Location: ${location.first}, ${location.second}",
-                style = MaterialTheme.typography.titleMedium,
-                color = Color.White
-            )
-
-            //add image for weather condition
+            // Girl Image for Outfit Guide
             Image(
                 painter = painterResource(id = viewModel.currentOutfitImage), // Load the image
                 contentDescription = "Weather Condition Image", // Accessibility description
@@ -135,10 +170,9 @@ fun WeatherContent(
                 contentScale = ContentScale.Fit // Adjust image scaling
             )
 
-            // Add Buttons for Navigation
-            //Spacer(modifier = Modifier.height(24.dp))
+            // Buttons for Navigation
             Button(
-                onClick = { navController.navigate("outfitGuide") }, // Navigate to OutfitGuide
+                onClick = { navController.navigate("outfitGuide") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
@@ -152,7 +186,7 @@ fun WeatherContent(
             }
 
             Button(
-                onClick = { navController.navigate("todayActivity") }, // Navigate to TodayActivity
+                onClick = { navController.navigate("todayActivity") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
@@ -167,7 +201,6 @@ fun WeatherContent(
         }
     }
 }
-
 
 @Composable
 fun WeatherInfoItem(label: String, value: String, textColor: Color) {
@@ -189,4 +222,3 @@ fun WeatherInfoItem(label: String, value: String, textColor: Color) {
         )
     }
 }
-

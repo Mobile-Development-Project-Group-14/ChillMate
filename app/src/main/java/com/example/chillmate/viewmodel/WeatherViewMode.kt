@@ -49,7 +49,7 @@ class WeatherViewModel : ViewModel() {
                 val response = WeatherApiService.instance.getWeatherData(
                     latitude = currentLocation.first,
                     longitude = currentLocation.second,
-                    current = "temperature_2m,precipitation,weather_code,wind_speed_10m,relative_humidity_2m,rain"
+                    current = "temperature_2m,precipitation,weather_code,relative_humidity_2m,rain,cloud_cover,apparent_temperature,showers,is_day,snowfall"
                 )
                 weatherUiState = WeatherUiState.Success(response)
                 updateOutfitImage(response.current.temperature_2m)
