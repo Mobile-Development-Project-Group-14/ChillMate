@@ -1,5 +1,6 @@
 package com.example.chillmate.ui.screens
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -50,6 +51,7 @@ import com.example.chillmate.ui.ErrorScreen
 import com.example.chillmate.ui.LoadingScreen
 import com.example.chillmate.viewmodel.WeatherUiState
 import com.example.chillmate.viewmodel.WeatherViewModel
+import androidx.compose.animation.core.tween
 
 @Composable
 fun HomeScreen(
@@ -94,11 +96,31 @@ fun WeatherContent(
     location: Pair<Double, Double>,
     viewModel: WeatherViewModel
 ) {
-    val gradientBrush = Brush.verticalGradient(
+    // Determine if it's day or night based on the API data
+    val isDay = data.current.is_day == 1
+    // Day/Night color definitions
+    val dayColors = listOf(
+        Color(0xFFC0DEFF),  // Light blue
+        Color(0xFF74B6FF),  // Medium blue
+        Color(0xFF419BFF)   // Dark blue
+    )
+
+    val nightColors = listOf(
+        Color(0xFF695A5A), // Dark brown
+        Color(0xFF9F6060), // Medium brown
+        Color(0xFF6B4F4F)  // Light brown
+    )
+
+    val animatedBackground by animateColorAsState(
+        targetValue = if (isDay) dayColors[0] else nightColors[0],
+        animationSpec = tween(durationMillis = 1000)
+    )
+
+    val animatedGradient = Brush.verticalGradient(
         colors = listOf(
-            Color(0xFFC0DEFF),  // Light blue
-            Color(0xFF74B6FF),  // Medium blue
-            Color(0xFF419BFF)   // Dark blue
+            animatedBackground,
+            if (isDay) dayColors[1] else nightColors[1],
+            if (isDay) dayColors[2] else nightColors[2]
         ),
         startY = 0f,
         endY = 1000f
@@ -111,9 +133,6 @@ fun WeatherContent(
 
     // Observe the location name state
     val locationName by viewModel.locationName.collectAsState()
-
-    // Determine if it's day or night based on the API data
-    val isDay = data.current.is_day == 1
 
     // Get the appropriate Lottie animation based on weather conditions
     val animationResId = getWeatherAnimation(data, isDay)
@@ -135,7 +154,7 @@ fun WeatherContent(
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF419BFF), // Match the gradient color
+                    containerColor = if (isDay) dayColors[2] else nightColors[1], // Match the gradient color
                     titleContentColor = Color.White
                 ),
                 navigationIcon = {
@@ -153,7 +172,7 @@ fun WeatherContent(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(gradientBrush)
+                    .background(animatedGradient)
             ) {
                 Column(
                     modifier = modifier
