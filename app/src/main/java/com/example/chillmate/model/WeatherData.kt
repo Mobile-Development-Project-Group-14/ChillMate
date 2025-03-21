@@ -14,7 +14,12 @@ data class CurrentWeather(
     val weather_code: Int,
     val wind_speed_10m: Double,
     val relative_humidity_2m: Int,
-    val rain: Double
+    val rain: Double,
+    val cloud_cover: Int,
+    val apparent_temperature: Double,
+    val showers: Int,
+    val is_day: Int,
+    val snowfall: Double
 )
 
 data class WeatherUnits(
