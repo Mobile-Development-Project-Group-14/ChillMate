@@ -17,8 +17,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.IconButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -73,6 +81,7 @@ fun getWeatherAnimation(weatherData: WeatherData, isDay: Boolean): Int {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherContent(
     modifier: Modifier = Modifier,
@@ -86,7 +95,6 @@ fun WeatherContent(
             Color(0xFFC0DEFF),  // Light blue
             Color(0xFF74B6FF),  // Medium blue
             Color(0xFF419BFF)   // Dark blue
-
         ),
         startY = 0f,
         endY = 1000f
@@ -103,103 +111,129 @@ fun WeatherContent(
         spec = LottieCompositionSpec.RawRes(animationResId)
     )
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(gradientBrush)
-    ) {
-        Column(
-            modifier = modifier
-                .padding(top = 24.dp)
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-
-            Text(
-                text = "Oulu/Toppila", // Hardcoded location
-                style = MaterialTheme.typography.headlineMedium,
-                color = Color.White
-            )
-            // Top Row: Temperature and Weather Animation
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                // Left Column: Temperature and Apparent Temperature
-                Column {
+    // Scaffold to structure the screen with a top bar
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
                     Text(
-                        text = "${data.current.temperature_2m}${data.current_units.temperature_2m}",
-                        style = MaterialTheme.typography.displayLarge,
+                        text = "ChillMate",
+                        style = MaterialTheme.typography.headlineMedium,
                         color = Color.White
                     )
-                    Text(
-                        text = "Feels like ${data.current.apparent_temperature}${data.current_units.temperature_2m}",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color.White
-                    )
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(0xFF419BFF), // Match the gradient color
+                    titleContentColor = Color.White
+                ),
+                navigationIcon = {
+                    IconButton(onClick = { /* Handle menu click */ }) {
+                        Icon(
+                            imageVector = Icons.Default.Menu,
+                            contentDescription = "Menu",
+                            tint = Color.White
+                        )
+                    }
                 }
-
-                // Right Column: Weather Animation
-                LottieAnimation(
-                    composition = composition,
-                    iterations = LottieConstants.IterateForever,
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                        .clickable {
-                            navController.navigate("outfitGuide")
-                        },
-                    contentScale = ContentScale.Fit
-                )
-            }
-
-            // Girl Image for Outfit Guide
-            Image(
-                painter = painterResource(id = viewModel.currentOutfitImage), // Load the image
-                contentDescription = "Weather Condition Image", // Accessibility description
-                modifier = Modifier
-                    .fillMaxWidth(0.4f) // Half of the screen width
-                    .fillMaxHeight(0.4f)
-                    .align(Alignment.CenterHorizontally) // Center the image
-                    .padding(vertical = 8.dp) // Add padding around the image
-                    .clip(RoundedCornerShape(16.dp))
-                    .clickable { // Make the image clickable
-                        navController.navigate("outfitGuide") // Navigate to Outfit Guide
-                    }, // Rounded corners
-                contentScale = ContentScale.Fit // Adjust image scaling
             )
-
-            // Buttons for Navigation
-            Button(
-                onClick = { navController.navigate("outfitGuide") },
+        },
+        content = { paddingValues ->
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White,
-                    contentColor = Color(0xFF4B6CB7)
-                )
+                    .fillMaxSize()
+                    .background(gradientBrush)
             ) {
-                Text("See Full Outfit Guide")
-            }
+                Column(
+                    modifier = modifier
+                        .padding(paddingValues) // Apply padding from Scaffold
+                        .padding(16.dp)
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Text(
+                        text = "Oulu", // Hardcoded location
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = Color.White
+                    )
 
-            Button(
-                onClick = { navController.navigate("todayActivity") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White,
-                    contentColor = Color(0xFF4B6CB7)
-                )
-            ) {
-                Text("What to Do Today")
+                    // Top Row: Temperature and Weather Animation
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        // Left Column: Temperature and Apparent Temperature
+                        Column {
+                            Text(
+                                text = "${data.current.temperature_2m}${data.current_units.temperature_2m}",
+                                style = MaterialTheme.typography.displayLarge,
+                                color = Color.White
+                            )
+                            Text(
+                                text = "Feels like ${data.current.apparent_temperature}${data.current_units.temperature_2m}",
+                                style = MaterialTheme.typography.titleLarge,
+                                color = Color.White
+                            )
+                        }
+
+                        // Right Column: Weather Animation
+                        LottieAnimation(
+                            composition = composition,
+                            iterations = LottieConstants.IterateForever,
+                            modifier = Modifier
+                                .size(100.dp)
+                                .clip(RoundedCornerShape(16.dp)),
+                            contentScale = ContentScale.Fit
+                        )
+                    }
+
+                    // Girl Image for Outfit Guide
+                    Image(
+                        painter = painterResource(id = viewModel.currentOutfitImage),
+                        contentDescription = "Outfit Guide Image",
+                        modifier = Modifier
+                            .fillMaxWidth(0.4f)
+                            .fillMaxHeight(0.4f)
+                            .align(Alignment.CenterHorizontally)
+                            .padding(vertical = 8.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .clickable {
+                                navController.navigate("outfitGuide")
+                            },
+                        contentScale = ContentScale.Fit
+                    )
+
+                    // Buttons for Navigation
+                    Button(
+                        onClick = { navController.navigate("outfitGuide") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White,
+                            contentColor = Color(0xFF4B6CB7)
+                        )
+                    ) {
+                        Text("See Full Outfit Guide")
+                    }
+
+                    Button(
+                        onClick = { navController.navigate("todayActivity") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White,
+                            contentColor = Color(0xFF4B6CB7)
+                        )
+                    ) {
+                        Text("What to Do Today")
+                    }
+                }
             }
         }
-    }
+    )
 }
 
 @Composable
