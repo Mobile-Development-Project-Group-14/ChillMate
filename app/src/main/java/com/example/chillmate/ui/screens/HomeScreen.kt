@@ -15,19 +15,21 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.IconButton
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,7 +38,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.airbnb.lottie.compose.LottieAnimation
@@ -76,8 +77,11 @@ fun getWeatherAnimation(weatherData: WeatherData, isDay: Boolean): Int {
         weatherData.current.snowfall > 0 -> {
             if (isDay) R.raw.day_snow else R.raw.night_snow
         }
-        weatherData.current.cloud_cover > 50 -> R.raw.cloudy
-        else -> R.raw.clear_sky // Default animation for clear weather
+        weatherData.current.cloud_cover > 50 -> {
+            if (isDay) R.raw.day_cloudy else R.raw.night_cloudy
+        }
+        isDay -> R.raw.day_clear_sky
+        else -> R.raw.night_clear_sky
     }
 }
 
@@ -99,6 +103,14 @@ fun WeatherContent(
         startY = 0f,
         endY = 1000f
     )
+
+    // Fetch location name when coordinates change
+    LaunchedEffect(location) {
+        viewModel.updateLocationName(location.first, location.second)
+    }
+
+    // Observe the location name state
+    val locationName by viewModel.locationName.collectAsState()
 
     // Determine if it's day or night based on the API data
     val isDay = data.current.is_day == 1
@@ -151,7 +163,7 @@ fun WeatherContent(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
-                        text = "Oulu", // Hardcoded location
+                        text = locationName, // Hardcoded location
                         style = MaterialTheme.typography.headlineMedium,
                         color = Color.White
                     )
@@ -236,23 +248,3 @@ fun WeatherContent(
     )
 }
 
-@Composable
-fun WeatherInfoItem(label: String, value: String, textColor: Color) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = "$label:",
-            style = MaterialTheme.typography.titleMedium,
-            color = textColor,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.titleMedium,
-            color = textColor,
-            fontWeight = FontWeight.Medium
-        )
-    }
-}
