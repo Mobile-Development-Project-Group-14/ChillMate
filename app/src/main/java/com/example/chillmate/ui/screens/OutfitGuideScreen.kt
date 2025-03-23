@@ -22,6 +22,11 @@ import com.example.chillmate.viewmodel.WeatherViewModel
 import com.example.chillmate.viewmodel.WeatherUiState
 import kotlinx.coroutines.launch
 import com.example.chillmate.R
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.foundation.lazy.itemsIndexed
+
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ButtonDefaults
@@ -29,6 +34,7 @@ import androidx.compose.material3.ButtonDefaults
 
 data class Outfit(val name: String, val description: String, val imageRes: Int)
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OutfitGuideScreen(navController: NavController, weatherViewModel: WeatherViewModel) {
     var weatherState by remember { mutableStateOf<WeatherUiState>(weatherViewModel.weatherUiState) }
@@ -52,11 +58,24 @@ fun OutfitGuideScreen(navController: NavController, weatherViewModel: WeatherVie
     val accessoryItems = remember { getAccessoryItems(temperature) }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        TopAppBar(
+            title = { Text("Outfit Guide") },
+            navigationIcon = {
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                }
+            },
+            actions = {
+                IconButton(onClick = { /* TODO: Handle menu */ }) {
+                    Icon(Icons.Default.Menu, contentDescription = "Menu")
+                }
+            }
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
         Spacer(modifier = Modifier.height(32.dp))
         Text(
             text = "Style It Right!",
@@ -69,8 +88,9 @@ fun OutfitGuideScreen(navController: NavController, weatherViewModel: WeatherVie
         ClothingCarousel(accessoryItems)
 
         LazyColumn(modifier = Modifier.weight(1f)) {
-            items(outfitSuggestions) { outfit ->
-                OutfitItem(outfit)
+            itemsIndexed(outfitSuggestions) { index, outfit ->
+                val isMiddle = index == outfitSuggestions.size / 2
+                OutfitItem(outfit, isHighlighted = isMiddle)
             }
         }
 
@@ -103,10 +123,10 @@ fun ClothingCarousel(accessoryItems: List<Outfit>) {
 fun ClothingItemCard(outfit: Outfit) {
     Card(
         shape = RoundedCornerShape(10.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF003366)),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         modifier = Modifier
-            .width(140.dp)
-            .height(140.dp)
+            .width(90.dp)
+            .height(95.dp)
     ) {
         Column(
             modifier = Modifier.padding(8.dp),
@@ -117,7 +137,7 @@ fun ClothingItemCard(outfit: Outfit) {
                 contentDescription = outfit.name,
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
-                    .size(100.dp)
+                    .size(70.dp)
                     .padding(4.dp)
             )
             Text(
@@ -131,11 +151,11 @@ fun ClothingItemCard(outfit: Outfit) {
 }
 
 @Composable
-fun OutfitItem(outfit: Outfit) {
+fun OutfitItem(outfit: Outfit, isHighlighted: Boolean = false) {
     Card(
         shape = RoundedCornerShape(10.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF003366),
+            containerColor = if (isHighlighted) Color(0xFF003366) else Color(0xFFDAECF5),
             contentColor = MaterialTheme.colorScheme.onSurface
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
@@ -166,6 +186,7 @@ fun OutfitItem(outfit: Outfit) {
         }
     }
 }
+
 
 fun getAccessoryItems(temperature: Double): List<Outfit> {
     return when {
