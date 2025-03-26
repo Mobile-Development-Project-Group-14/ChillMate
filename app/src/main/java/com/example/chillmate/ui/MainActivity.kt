@@ -89,7 +89,7 @@ fun ChillMateApp(locationPermissionLauncher: androidx.activity.result.ActivityRe
 
         }
         composable("todayActivity") {
-            TodayActivityScreen()
+            TodayActivityScreen(navController=navController, viewModel=viewModel)
         }
     }
 }
