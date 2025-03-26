@@ -1,14 +1,39 @@
 package com.example.chillmate.ui.screens
 
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,18 +43,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.chillmate.viewmodel.WeatherViewModel
-import com.example.chillmate.viewmodel.WeatherUiState
-import kotlinx.coroutines.launch
 import com.example.chillmate.R
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.foundation.lazy.itemsIndexed
-
-
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ButtonDefaults
+import com.example.chillmate.ui.theme.AppTheme
+import com.example.chillmate.viewmodel.WeatherUiState
+import com.example.chillmate.viewmodel.WeatherViewModel
 
 
 data class Outfit(val name: String, val description: String, val imageRes: Int)
@@ -37,76 +54,100 @@ data class Outfit(val name: String, val description: String, val imageRes: Int)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OutfitGuideScreen(navController: NavController, weatherViewModel: WeatherViewModel) {
-    var weatherState by remember { mutableStateOf<WeatherUiState>(weatherViewModel.weatherUiState) }
-    val coroutineScope = rememberCoroutineScope()
-
-    LaunchedEffect(Unit) {
-        coroutineScope.launch {
-            val state = weatherViewModel.weatherUiState
-            if (state is WeatherUiState.Success) {
-                weatherState = state
-            }
-        }
+    val isDay = when (val state = weatherViewModel.weatherUiState) {
+        is WeatherUiState.Success -> state.data.current.is_day == 1
+        else -> true
     }
 
-    val temperature = when (weatherState) {
-        is WeatherUiState.Success -> (weatherState as WeatherUiState.Success).data.current.temperature_2m
-        else -> 20.0 // Default temperature if data is unavailable
-    }
-
-    val outfitSuggestions = remember { getOutfitSuggestions(temperature) }
-    val accessoryItems = remember { getAccessoryItems(temperature) }
-
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        TopAppBar(
-            title = { Text("Outfit Guide") },
-            navigationIcon = {
-                IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        "Outfit Guide",
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = Color.White
+                    )
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = AppTheme.getTopBarColor(isDay),
+                    titleContentColor = Color.White
+                ),
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Color.White
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { /* TODO: Handle menu */ }) {
+                        Icon(
+                            Icons.Default.Menu,
+                            contentDescription = "Menu",
+                            tint = Color.White
+                        )
+                    }
                 }
-            },
-            actions = {
-                IconButton(onClick = { /* TODO: Handle menu */ }) {
-                    Icon(Icons.Default.Menu, contentDescription = "Menu")
-                }
-            }
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-        Spacer(modifier = Modifier.height(32.dp))
-        Text(
-            text = "Style It Right!",
-            fontSize = 28.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        ClothingCarousel(accessoryItems)
-
-        LazyColumn(modifier = Modifier.weight(1f)) {
-            itemsIndexed(outfitSuggestions) { index, outfit ->
-                val isMiddle = index == outfitSuggestions.size / 2
-                OutfitItem(outfit, isHighlighted = isMiddle)
-            }
+            )
         }
-
-        Spacer(modifier = Modifier.height(2.dp))
-        Button(
-            onClick = { /* Navigate to buy link */ },
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Blue),
-            modifier = Modifier.fillMaxWidth().padding(16.dp)
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(AppTheme.getBackgroundGradient(isDay))
+                .padding(paddingValues)
         ) {
-            Text("Stay Cozy, Click to Buy!", color = Color.White)
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                val temperature = weatherViewModel.weatherUiState.let { state ->
+                    if (state is WeatherUiState.Success) state.data.current.temperature_2m else 20.0
+                }
+
+                Text(
+                    text = "Style It Right!",
+                    fontSize = 28.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
+                ClothingCarousel(getAccessoryItems(temperature))
+
+                LazyColumn(modifier = Modifier.weight(1f)) {
+                    itemsIndexed(getOutfitSuggestions(temperature)) { index, outfit ->
+                        OutfitItem(
+                            outfit = outfit,
+                            isHighlighted = index == 1
+                        )
+                    }
+                }
+
+                Button(
+                    onClick = { /* Navigate to buy link */ },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.White,
+                        contentColor = AppTheme.dayColors[2]
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Text("Stay Cozy, Click to Buy!", color = AppTheme.dayColors[2])
+                }
+            }
         }
     }
 }
 
 @Composable
-fun ClothingCarousel(accessoryItems: List<Outfit>) {
+private fun ClothingCarousel(accessoryItems: List<Outfit>) {
     LazyRow(
         modifier = Modifier
             .fillMaxWidth()
@@ -120,10 +161,13 @@ fun ClothingCarousel(accessoryItems: List<Outfit>) {
 }
 
 @Composable
-fun ClothingItemCard(outfit: Outfit) {
+private fun ClothingItemCard(outfit: Outfit) {
     Card(
         shape = RoundedCornerShape(10.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White.copy(alpha = 0.2f),
+            contentColor = Color.White
+        ),
         modifier = Modifier
             .width(90.dp)
             .height(95.dp)
@@ -144,22 +188,24 @@ fun ClothingItemCard(outfit: Outfit) {
                 text = outfit.name,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
+                color = Color.White
             )
         }
     }
 }
 
 @Composable
-fun OutfitItem(outfit: Outfit, isHighlighted: Boolean = false) {
+private fun OutfitItem(outfit: Outfit, isHighlighted: Boolean = false) {
     Card(
         shape = RoundedCornerShape(10.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isHighlighted) Color(0xFF003366) else Color(0xFFDAECF5),
-            contentColor = MaterialTheme.colorScheme.onSurface
+            containerColor = Color.White.copy(alpha = if (isHighlighted) 0.3f else 0.2f),
+            contentColor = Color.White
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Image(
@@ -175,13 +221,13 @@ fun OutfitItem(outfit: Outfit, isHighlighted: Boolean = false) {
                 text = outfit.name,
                 fontWeight = FontWeight.Bold,
                 fontSize = 22.sp,
-                color = MaterialTheme.colorScheme.primary
+                color = Color.White
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
                 text = outfit.description,
                 fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.onBackground
+                color = Color.White.copy(alpha = 0.8f)
             )
         }
     }

@@ -1,6 +1,7 @@
 package com.example.chillmate.ui.screens
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,7 +34,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
@@ -49,11 +50,12 @@ import com.example.chillmate.R
 import com.example.chillmate.model.WeatherData
 import com.example.chillmate.ui.ErrorScreen
 import com.example.chillmate.ui.LoadingScreen
+import com.example.chillmate.ui.theme.AppTheme
+import com.example.chillmate.ui.theme.AppTheme.dayColors
+import com.example.chillmate.ui.theme.AppTheme.nightColors
+import com.example.chillmate.ui.weather.DailyForecast
 import com.example.chillmate.viewmodel.WeatherUiState
 import com.example.chillmate.viewmodel.WeatherViewModel
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.aspectRatio
-import com.example.chillmate.ui.weather.DailyForecast
 
 @Composable
 fun HomeScreen(
@@ -100,32 +102,14 @@ fun WeatherContent(
     location: Pair<Double, Double>,
     viewModel: WeatherViewModel
 ) {
-    // Determine if it's day or night based on the API data
     val isDay = data.current.is_day == 1
-    // Day/Night color definitions
-    val dayColors = listOf(
-        Color(0xFFC0DEFF),  // Light blue
-        Color(0xFF74B6FF),  // Medium blue
-        Color(0xFF419BFF)   // Dark blue
-    )
-
-    val nightColors = listOf(
-        Color(0xFF695A5A), // Dark brown
-        Color(0xFF9F6060), // Medium brown
-        Color(0xFF6B4F4F)  // Light brown
-    )
-
     val animatedBackground by animateColorAsState(
-        targetValue = if (isDay) dayColors[0] else nightColors[0],
+        targetValue = if (isDay) AppTheme.dayColors[0] else AppTheme.nightColors[0],
         animationSpec = tween(durationMillis = 1000)
     )
 
     val animatedGradient = Brush.verticalGradient(
-        colors = listOf(
-            animatedBackground,
-            if (isDay) dayColors[1] else nightColors[1],
-            if (isDay) dayColors[2] else nightColors[2]
-        ),
+        colors = if (isDay) AppTheme.dayColors else AppTheme.nightColors,
         startY = 0f,
         endY = 1000f
     )

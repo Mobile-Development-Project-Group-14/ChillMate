@@ -1,7 +1,6 @@
 package com.example.chillmate.ui.screens
 
 import androidx.compose.foundation.Image
-import com.example.chillmate.R  // Auto-added by Android Studio
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,7 +32,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -42,12 +40,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.chillmate.R
 import com.example.chillmate.model.Activity
 import com.example.chillmate.model.WeatherCondition
-import com.example.chillmate.ui.theme.ChillMateTheme
+import com.example.chillmate.ui.theme.AppTheme
 import com.example.chillmate.viewmodel.WeatherUiState
 import com.example.chillmate.viewmodel.WeatherViewModel
-
 
 
 //Hardcoded data for weather data
@@ -63,97 +61,65 @@ val todayWeather = WeatherCondition(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodayActivityScreen(navController: NavController? = null, viewModel: WeatherViewModel? = null) {
-    // Determine if it's day or night (use viewModel data if available, otherwise fallback to todayWeather)
-    val isDay = viewModel?.weatherUiState?.let { state ->
-        if (state is WeatherUiState.Success) state.data.current.is_day == 1 else todayWeather.isDay
-    } ?: todayWeather.isDay
+fun TodayActivityScreen(navController: NavController, viewModel: WeatherViewModel) {
+    val isDay = when (val state = viewModel.weatherUiState) {
+        is WeatherUiState.Success -> state.data.current.is_day == 1
+        else -> true
+    }
 
-    // Color definitions matching HomeScreen
-    val dayColors = listOf(
-        Color(0xFFC0DEFF),  // Light blue
-        Color(0xFF74B6FF),  // Medium blue
-        Color(0xFF419BFF)   // Dark blue
-    )
-
-    val nightColors = listOf(
-        Color(0xFF695A5A), // Dark brown
-        Color(0xFF9F6060), // Medium brown
-        Color(0xFF6B4F4F)  // Light brown
-    )
-
-    val backgroundGradient = Brush.verticalGradient(
-        colors = if (isDay) dayColors else nightColors,
-        startY = 0f,
-        endY = 1000f
-    )
-
-    ChillMateTheme {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Text(
-                            "Today's Activities",
-                            style = MaterialTheme.typography.headlineMedium,
-                            color = Color.White
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Today's Activities", color = Color.White) },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = AppTheme.getTopBarColor(isDay),
+                    titleContentColor = Color.White
+                ),
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Color.White
                         )
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = if (isDay) dayColors[2] else nightColors[1],
-                        titleContentColor = Color.White
-                    ),
-                    navigationIcon = {
-                        IconButton(onClick = { navController?.popBackStack() }) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowBack,
-                                contentDescription = "Back",
-                                tint = Color.White
-                            )
-                        }
                     }
-                )
-            }
-        ) { paddingValues ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(backgroundGradient)
-                    .padding(paddingValues)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                ) {
-
-                    // Display list of activities based on weather
-                    val activities = getActivitySuggestions(
-                        viewModel?.weatherUiState?.let { state ->
-                            if (state is WeatherUiState.Success) {
-                                val weatherType = when {
-                                    state.data.current.precipitation > 0 -> "rain" to "🌧️"
-                                    state.data.current.snowfall > 0 -> "snow" to "❄️"
-                                    state.data.current.cloud_cover > 50 -> "cloudy" to "☁️"
-                                    else -> "sunny" to if (state.data.current.is_day == 1) "☀️" else "🌙"
-                                }
-                                WeatherCondition(
-                                    location = viewModel.locationName.value,
-                                    type = weatherType.first,
-                                    icon = weatherType.second,
-                                    temperature = state.data.current.temperature_2m.toInt(),
-                                    isDay = state.data.current.is_day == 1
-
-                                )
-                            } else {
-                                todayWeather
-                            }
-                        } ?: todayWeather
+                }
+            )
+        }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(AppTheme.getBackgroundGradient(isDay))
+                .padding(paddingValues)
+        ) {
+            val weatherCondition = viewModel.weatherUiState.let { state ->
+                if (state is WeatherUiState.Success) {
+                    val weatherType = when {
+                        state.data.current.precipitation > 0 -> "rain" to "🌧️"
+                        state.data.current.snowfall > 0 -> "snow" to "❄️"
+                        state.data.current.cloud_cover > 50 -> "cloudy" to "☁️"
+                        else -> "sunny" to if (isDay) "☀️" else "🌙"
+                    }
+                    WeatherCondition(
+                        location = viewModel.locationName.value,
+                        type = weatherType.first,
+                        icon = weatherType.second,
+                        temperature = state.data.current.temperature_2m.toInt(),
+                        isDay = isDay
                     )
-
-                    ActivityList(activities = activities)
+                } else {
+                    WeatherCondition( // Provide default values
+                        location = "Unknown",
+                        type = "clear",
+                        icon = "☀️",
+                        temperature = 20,
+                        isDay = true
+                    )
                 }
             }
+
+            ActivityList(activities = getActivitySuggestions(weatherCondition))
         }
     }
 }
