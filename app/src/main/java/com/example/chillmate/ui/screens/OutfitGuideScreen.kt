@@ -130,7 +130,7 @@ fun OutfitGuideScreen(navController: NavController, weatherViewModel: WeatherVie
                 }
 
                 Button(
-                    onClick = { /* Navigate to buy link */ },
+                    onClick = { navController.navigate("shop") },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.White,
                         contentColor = AppTheme.dayColors[2]
