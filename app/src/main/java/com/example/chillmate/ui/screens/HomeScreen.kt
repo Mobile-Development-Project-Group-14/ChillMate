@@ -221,8 +221,7 @@ fun WeatherContent(
                     }
 
                     DailyForecast(
-                        daily = data.daily,
-                        isDay = isDay
+                        daily = data.daily
                     )
 
                     // Girl Image for Outfit Guide
