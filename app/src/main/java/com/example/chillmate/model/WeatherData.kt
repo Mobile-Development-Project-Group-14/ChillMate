@@ -4,7 +4,8 @@ data class WeatherData(
     val latitude: Double,
     val longitude: Double,
     val current: CurrentWeather,
-    val current_units: WeatherUnits
+    val current_units: WeatherUnits,
+    val daily: DailyWeather
 )
 
 data class CurrentWeather(
@@ -27,4 +28,11 @@ data class WeatherUnits(
     val precipitation: String,
     val wind_speed_10m: String,
     val relative_humidity_2m: String
+)
+
+data class DailyWeather(
+    val time: List<String>,           // Dates (e.g., ["2023-10-01", "2023-10-02"])
+    val temperature_2m_max: List<Double>,
+    val temperature_2m_min: List<Double>,
+    val precipitation_sum: List<Double>
 )
