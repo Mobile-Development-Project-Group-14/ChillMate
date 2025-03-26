@@ -52,6 +52,7 @@ import com.example.chillmate.ui.LoadingScreen
 import com.example.chillmate.viewmodel.WeatherUiState
 import com.example.chillmate.viewmodel.WeatherViewModel
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.aspectRatio
 import com.example.chillmate.ui.weather.DailyForecast
 
 @Composable
@@ -182,7 +183,7 @@ fun WeatherContent(
                         .padding(paddingValues) // Apply padding from Scaffold
                         .padding(16.dp)
                         .verticalScroll(rememberScrollState()),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
                         text = locationName, // Hardcoded location
@@ -224,49 +225,73 @@ fun WeatherContent(
                         daily = data.daily
                     )
 
-                    // Girl Image for Outfit Guide
-                    Image(
-                        painter = painterResource(id = viewModel.currentOutfitImage),
-                        contentDescription = "Outfit Guide Image",
-                        modifier = Modifier
-                            .fillMaxWidth(0.4f)
-                            .fillMaxHeight(0.4f)
-                            .align(Alignment.CenterHorizontally)
-                            .padding(vertical = 8.dp)
-                            .clip(RoundedCornerShape(16.dp))
-                            .clickable {
-                                navController.navigate("outfitGuide")
-                            },
-                        contentScale = ContentScale.Fit
-                    )
-
-                    // Buttons for Navigation
-                    Button(
-                        onClick = { navController.navigate("outfitGuide") },
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .fillMaxHeight()
                             .padding(vertical = 8.dp),
-                        shape = RoundedCornerShape(8.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.White,
-                            contentColor = Color(0xFF4B6CB7)
-                        )
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("See Full Outfit Guide")
+                        // Outfit Guide Image
+                        Image(
+                            painter = painterResource(id = viewModel.currentOutfitImage),
+                            contentDescription = "Outfit Guide Image",
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(end = 8.dp)
+                                .clip(RoundedCornerShape(16.dp))
+                                .clickable { navController.navigate("outfitGuide") }
+                                .aspectRatio(.5f),
+                            contentScale = ContentScale.Crop
+                        )
+
+                        // Today's Activity Image
+                        Image(
+                            painter = painterResource(id = R.drawable.todayactivity),
+                            contentDescription = "Today's Activities Image",
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(start = 8.dp)
+                                .clip(RoundedCornerShape(16.dp))
+                                .clickable { navController.navigate("todayActivity") }
+                                .aspectRatio(.5f),
+                            contentScale = ContentScale.Crop
+                        )
                     }
 
-                    Button(
-                        onClick = { navController.navigate("todayActivity") },
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 8.dp),
-                        shape = RoundedCornerShape(8.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.White,
-                            contentColor = Color(0xFF4B6CB7)
-                        )
+                            .padding(vertical = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        Text("What to Do Today")
+                        Button(
+                            onClick = { navController.navigate("outfitGuide") },
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(end = 8.dp),
+                            shape = RoundedCornerShape(8.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.White,
+                                contentColor = Color(0xFF4B6CB7)
+                            )
+                        ) {
+                            Text("Full Outfit Guide")
+                        }
+
+                        Button(
+                            onClick = { navController.navigate("todayActivity") },
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(start = 8.dp),
+                            shape = RoundedCornerShape(8.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.White,
+                                contentColor = Color(0xFF4B6CB7)
+                            )
+                        ) {
+                            Text("What to Do Today")
+                        }
                     }
                 }
             }
