@@ -9,7 +9,9 @@ interface WeatherApi {
     suspend fun getWeatherData(
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double,
-        @Query("current") current: String
+        @Query("current") current: String,
+        @Query("daily") daily: String,
+        @Query("forecast_days") forecast_days: Int
     ): WeatherData
 }
 

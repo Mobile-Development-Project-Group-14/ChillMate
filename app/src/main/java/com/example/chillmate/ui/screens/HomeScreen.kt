@@ -52,6 +52,7 @@ import com.example.chillmate.ui.LoadingScreen
 import com.example.chillmate.viewmodel.WeatherUiState
 import com.example.chillmate.viewmodel.WeatherViewModel
 import androidx.compose.animation.core.tween
+import com.example.chillmate.ui.weather.DailyForecast
 
 @Composable
 fun HomeScreen(
@@ -218,6 +219,11 @@ fun WeatherContent(
                             contentScale = ContentScale.Fit
                         )
                     }
+
+                    DailyForecast(
+                        daily = data.daily,
+                        isDay = isDay
+                    )
 
                     // Girl Image for Outfit Guide
                     Image(
