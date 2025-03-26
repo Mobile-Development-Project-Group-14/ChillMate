@@ -71,19 +71,21 @@ fun HomeScreen(
 }
 
 // Function to get the appropriate Lottie animation based on weather conditions
-fun getWeatherAnimation(weatherData: WeatherData, isDay: Boolean): Int {
-    return when {
-        weatherData.current.precipitation > 0 -> {
-            if (isDay) R.raw.day_rain else R.raw.night_rain
-        }
-        weatherData.current.snowfall > 0 -> {
-            if (isDay) R.raw.day_snow else R.raw.night_snow
-        }
-        weatherData.current.cloud_cover > 50 -> {
-            if (isDay) R.raw.day_cloudy else R.raw.night_cloudy
-        }
-        isDay -> R.raw.day_clear_sky
-        else -> R.raw.night_clear_sky
+fun getWeatherAnimation(weatherCode: Int, isDay: Boolean): Int {
+    return when (weatherCode) {
+        0 -> if (isDay) R.raw.day_clear_sky else R.raw.night_clear_sky
+        1, 2, 3 -> if (isDay) R.raw.day_cloudy else R.raw.night_cloudy
+        45, 48 -> R.raw.day_fog
+        51, 53, 55 -> if (isDay) R.raw.day_rain else R.raw.night_rain
+        56, 57 -> if (isDay) R.raw.day_rain else R.raw.night_rain
+        61, 63, 65 -> if (isDay) R.raw.day_rain else R.raw.night_rain
+        66, 67 -> if (isDay) R.raw.day_rain else R.raw.night_rain
+        71, 73, 75 -> if (isDay) R.raw.day_snow else R.raw.night_snow
+        77 -> if (isDay) R.raw.day_snow else R.raw.night_snow
+        80, 81, 82 -> if (isDay) R.raw.day_rain else R.raw.night_rain
+        85, 86 -> if (isDay) R.raw.day_snow else R.raw.night_snow
+        95, 96, 99 -> if (isDay) R.raw.day_thunderstorm else R.raw.night_thunderstorm
+        else -> if (isDay) R.raw.day_clear_sky else R.raw.night_clear_sky // Default
     }
 }
 
@@ -135,7 +137,7 @@ fun WeatherContent(
     val locationName by viewModel.locationName.collectAsState()
 
     // Get the appropriate Lottie animation based on weather conditions
-    val animationResId = getWeatherAnimation(data, isDay)
+    val animationResId = getWeatherAnimation(data.current.weather_code, isDay)
 
     // Load Lottie composition
     val composition by rememberLottieComposition(
