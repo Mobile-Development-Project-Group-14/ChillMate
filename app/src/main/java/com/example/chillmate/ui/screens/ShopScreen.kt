@@ -16,6 +16,8 @@ import androidx.navigation.NavController
 import com.example.chillmate.ui.theme.AppTheme
 import com.example.chillmate.viewmodel.WeatherUiState
 import com.example.chillmate.viewmodel.WeatherViewModel
+import com.example.chillmate.ui.components.ChillMateScaffold
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,40 +27,11 @@ fun ShopScreen(navController: NavController, viewModel: WeatherViewModel) {
         else -> true
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        "Winter Essentials Shop",
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = Color.White
-                    )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = AppTheme.getTopBarColor(isDay),
-                    titleContentColor = Color.White
-                ),
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = Color.White
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { /* TODO: Handle menu */ }) {
-                        Icon(
-                            Icons.Default.Menu,
-                            contentDescription = "Menu",
-                            tint = Color.White
-                        )
-                    }
-                }
-            )
-        }
+    ChillMateScaffold(
+        navController = navController,
+        isDay = isDay,
+        title = "Winter Essentials Shop",
+        showBackButton = true
     ) { paddingValues ->
         Box(
             modifier = Modifier
