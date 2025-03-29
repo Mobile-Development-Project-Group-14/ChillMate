@@ -47,6 +47,7 @@ import com.example.chillmate.R
 import com.example.chillmate.ui.theme.AppTheme
 import com.example.chillmate.viewmodel.WeatherUiState
 import com.example.chillmate.viewmodel.WeatherViewModel
+import com.example.chillmate.ui.components.ChillMateScaffold
 
 
 data class Outfit(val name: String, val description: String, val imageRes: Int)
@@ -59,40 +60,10 @@ fun OutfitGuideScreen(navController: NavController, weatherViewModel: WeatherVie
         else -> true
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        "Outfit Guide",
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = Color.White
-                    )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = AppTheme.getTopBarColor(isDay),
-                    titleContentColor = Color.White
-                ),
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            Icons.Default.ArrowBack,
-                            contentDescription = "Back",
-                            tint = Color.White
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { /* TODO: Handle menu */ }) {
-                        Icon(
-                            Icons.Default.Menu,
-                            contentDescription = "Menu",
-                            tint = Color.White
-                        )
-                    }
-                }
-            )
-        }
+    ChillMateScaffold(
+        navController = navController,
+        isDay = isDay,
+        title = "Outfit Guide"
     ) { paddingValues ->
         Box(
             modifier = Modifier
