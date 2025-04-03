@@ -27,6 +27,7 @@ import com.example.chillmate.ui.screens.HomeScreen
 import com.example.chillmate.ui.screens.OutfitGuideScreen
 import com.example.chillmate.ui.screens.ShopScreen
 import com.example.chillmate.ui.screens.TodayActivityScreen
+import com.example.chillmate.ui.screens.TravelGuideScreen
 import com.example.chillmate.ui.theme.ChillMateTheme
 import com.example.chillmate.viewmodel.WeatherViewModel
 import com.google.android.gms.location.LocationServices
@@ -95,6 +96,9 @@ fun ChillMateApp(locationPermissionLauncher: androidx.activity.result.ActivityRe
 
         composable("shop") {
             ShopScreen(navController = navController, viewModel = viewModel)
+        }
+        composable("travelGuide") {
+            TravelGuideScreen(navController, viewModel)
         }
     }
 }

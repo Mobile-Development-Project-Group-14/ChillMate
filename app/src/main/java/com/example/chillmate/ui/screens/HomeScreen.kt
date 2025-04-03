@@ -263,6 +263,19 @@ fun WeatherContent(
                             Text("What to Do Today")
                         }
                     }
+                    Button(
+                        onClick = { navController.navigate("travelGuide") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White,
+                            contentColor = Color(0xFF4B6CB7)
+                        )
+                    ) {
+                        Text("Travel Guide")
+                    }
                 }
             }
         }

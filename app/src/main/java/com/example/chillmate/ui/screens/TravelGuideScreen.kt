@@ -21,10 +21,9 @@ import com.example.chillmate.ui.theme.AppTheme
 import com.example.chillmate.viewmodel.WeatherUiState
 import com.example.chillmate.viewmodel.WeatherViewModel
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShopScreen(navController: NavController, viewModel: WeatherViewModel) {
+fun TravelGuideScreen(navController: NavController, viewModel: WeatherViewModel) {
     val isDay = when (val state = viewModel.weatherUiState) {
         is WeatherUiState.Success -> state.data.current.is_day == 1
         else -> true
@@ -33,7 +32,7 @@ fun ShopScreen(navController: NavController, viewModel: WeatherViewModel) {
     ChillMateScaffold(
         navController = navController,
         isDay = isDay,
-        title = "Winter Essentials Shop",
+        title = "Travel Guide",
         showBackButton = true
     ) { paddingValues ->
         Box(
@@ -50,14 +49,14 @@ fun ShopScreen(navController: NavController, viewModel: WeatherViewModel) {
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Coming Soon!\n\nOur winter essentials shop is under construction.",
+                    text = "Coming Soon!\n\nOur travel guide is under development.",
                     style = MaterialTheme.typography.headlineSmall,
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(16.dp)
                 )
 
-                // We'll add product listings here later
+                // We'll add travel guide content here later
             }
         }
     }
