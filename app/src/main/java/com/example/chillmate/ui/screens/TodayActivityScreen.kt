@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
@@ -30,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,6 +48,8 @@ import com.example.chillmate.R
 import com.example.chillmate.model.Activity
 import com.example.chillmate.model.WeatherCondition
 import com.example.chillmate.ui.theme.AppTheme
+import com.example.chillmate.ui.weather.getActivitySuggestions
+import com.example.chillmate.ui.weather.getCurrentWeatherCondition
 import com.example.chillmate.viewmodel.WeatherUiState
 import com.example.chillmate.viewmodel.WeatherViewModel
 
@@ -68,10 +73,20 @@ fun TodayActivityScreen(navController: NavController, viewModel: WeatherViewMode
         else -> true
     }
 
+    val backgroundGradient = AppTheme.getBackgroundGradient(isDay)
+    val weatherCondition = getCurrentWeatherCondition(viewModel)
+    val activities = remember { getActivitySuggestions(weatherCondition) }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Today's Activities", color = Color.White) },
+                title = {
+                    Text(
+                        "Today's Activities",
+                        color = Color.White,
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = AppTheme.getTopBarColor(isDay),
                     titleContentColor = Color.White
@@ -84,15 +99,6 @@ fun TodayActivityScreen(navController: NavController, viewModel: WeatherViewMode
                             tint = Color.White
                         )
                     }
-                },
-                actions = {
-                    IconButton(onClick = { /* TODO: Handle menu */ }) {
-                        Icon(
-                            Icons.Default.Menu,
-                            contentDescription = "Menu",
-                            tint = Color.White
-                        )
-                    }
                 }
             )
         }
@@ -100,344 +106,146 @@ fun TodayActivityScreen(navController: NavController, viewModel: WeatherViewMode
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(AppTheme.getBackgroundGradient(isDay))
-                .padding(paddingValues)
+                .background(backgroundGradient)
         ) {
-            val weatherCondition = viewModel.weatherUiState.let { state ->
-                if (state is WeatherUiState.Success) {
-                    val weatherType = when {
-                        state.data.current.precipitation > 0 -> "rain" to "🌧️"
-                        state.data.current.snowfall > 0 -> "snow" to "❄️"
-                        state.data.current.cloud_cover > 50 -> "cloudy" to "☁️"
-                        else -> "sunny" to if (isDay) "☀️" else "🌙"
+            LazyColumn(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+            ) {
+
+
+                // Grouped activities
+                val groupedActivities = activities.groupBy { it.category.first() }
+                groupedActivities.forEach { (category, items) ->
+                    item {
+                        Text(
+                            text = "${category.replaceFirstChar { it.uppercase() }} Activities",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Color.White,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                        )
                     }
-                    WeatherCondition(
-                        location = viewModel.locationName.value,
-                        type = weatherType.first,
-                        icon = weatherType.second,
-                        temperature = state.data.current.temperature_2m.toInt(),
-                        isDay = isDay
-                    )
-                } else {
-                    WeatherCondition( // Provide default values
-                        location = "Unknown",
-                        type = "clear",
-                        icon = "☀️",
-                        temperature = 20,
-                        isDay = true
-                    )
+
+                    items(items) { activity ->
+                        ActivityCard(activity = activity) {
+                            // Handle click event here
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
                 }
             }
-
-            ActivityList(activities = getActivitySuggestions(weatherCondition))
         }
     }
 }
 
 @Composable
-fun WeatherInfo(weather: WeatherCondition) {
-    Column (
+private fun WeatherInfo(weather: WeatherCondition) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxWidth()
-
+        verticalArrangement = Arrangement.Center
     ) {
         Text(
             text = weather.icon,
             fontSize = 48.sp,
             color = Color.White
         )
-
         Spacer(modifier = Modifier.height(8.dp))
-        //Display Location
         Text(
             text = weather.location,
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White
         )
-
         Spacer(modifier = Modifier.height(8.dp))
-        //Display Temperature
         Text(
             text = "${weather.temperature}°C",
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White
-
         )
-
         Spacer(modifier = Modifier.height(8.dp))
-        //Display Weather Condition
         Text(
             text = weather.type.replaceFirstChar { it.uppercase() },
             fontSize = 24.sp,
             color = Color.White.copy(alpha = 0.8f)
         )
-
-
     }
 }
 
 @Composable
-fun getActivitySuggestions(weather: WeatherCondition) : List<Activity> {
-
-    return when {
-        //Handle precipitation first
-        weather.type== "rain" -> listOf(
-            Activity(
-                name = "Museum Marathon",
-                description = "Visit 3+ museums in one day",
-                imageRes = R.drawable.museum_marathon,
-                category = listOf("culture", "indoor"),
-                priceLevel = 2
-            ),
-            Activity(
-                name = "Tea Ceremony Workshop",
-                description = "Learn traditional brewing techniques",
-                imageRes = R.drawable.tea_workshop,
-                category = listOf("wellness", "educational")
-            )
-        )
-
-        // ==== Freezing Conditions (<0°C) ====
-        weather.temperature <= -10 -> listOf(
-            Activity(
-                name = "Aurora Hunting",
-                description = "Chase northern lights in clear winter skies",
-                imageRes = R.drawable.aurora_hunting,
-                category = listOf("winter", "night"),
-                requirements = listOf("Thermal suit", "Tripod", "Hot drinks")
-            ),
-            Activity(
-                name = "Ice Sculpture Workshop",
-                description = "Create art from frozen water",
-                imageRes = R.drawable.ice_sculpture,
-                category = listOf("creative", "winter"),
-                equipment = listOf("Ice tools", "Gloves")
-            )
-        )
-
-        // ==== Cold (0°C to -10°C) ====
-        weather.temperature < 0 -> listOf(
-            Activity(
-                name = "Winter Photography",
-                description = "Capture stunning frosty landscapes",
-                imageRes = R.drawable.winter_photography,
-                category = listOf("creative", "outdoor"),
-                equipment = listOf("Camera", "Tripod")
-            ),
-            Activity(
-                name = "Hot Spring Visit",
-                description = "Relax in naturally heated mineral waters",
-                imageRes = R.drawable.hot_springs,
-                category = listOf("wellness", "relaxation")
-            )
-        )
-
-        // ==== Chilly (0-10°C) ==== [NEW]
-        weather.temperature in 0..10 -> listOf(
-            Activity(
-                name = "Maple Syrup Tasting",
-                description = "Sample winter-harvested syrups",
-                imageRes = R.drawable.syrup_tasting,
-                category = listOf("food", "seasonal"),
-                priceLevel = 2
-            ),
-            Activity(
-                name = "Winter Birdwatching",
-                description = "Spot migratory birds in coastal areas",
-                imageRes = R.drawable.winter_birding,
-                category = listOf("nature", "outdoor"),
-                bestTime = "10AM-2PM"
-            )
-        )
-
-        // ==== Mild (10-20°C) ==== [NEW]
-        weather.temperature in 11..20 -> listOf(
-            Activity(
-                name = "Urban Cycling",
-                description = "Explore city bike paths in cool comfort",
-                imageRes = R.drawable.urban_cycling,
-                category = listOf("active", "transport"),
-                equipment = listOf("Bike", "Helmet")
-            ),
-            Activity(
-                name = "Open-Air Markets",
-                description = "Browse seasonal produce stalls",
-                imageRes = R.drawable.spring_market,
-                category = listOf("shopping", "local")
-            )
-        )
-
-        // ==== Warm (20-30°C) ==== [NEW]
-        weather.temperature in 21..30 -> listOf(
-            Activity(
-                name = "Kayak Sunrise Tour",
-                description = "Paddle through calm morning waters",
-                imageRes = R.drawable.kayak_sunrise,
-                category = listOf("water", "sunrise"),
-                requirements = listOf("Sunscreen", "Water shoes")
-            ),
-            Activity(
-                name = "Rooftop Film Night",
-                description = "Open-air cinema under the stars",
-                imageRes = R.drawable.rooftop_cinema,
-                category = listOf("night", "entertainment")
-            )
-        )
-
-        // ==== Hot (>30°C) ==== [NEW]
-        weather.temperature > 30 -> listOf(
-            Activity(
-                name = "Desert Stargazing",
-                description = "Observe clear night skies in arid regions",
-                imageRes = R.drawable.desert_stars,
-                category = listOf("night", "extreme"),
-                requirements = listOf("Water", "Hat")
-            ),
-            Activity(
-                name = "Cave Exploration",
-                description = "Discover cool underground formations",
-                imageRes = R.drawable.cave_tour,
-                category = listOf("geology", "adventure")
-            )
-        )
-
-        // ==== Rainy Conditions ==== [ENHANCED]
-        weather.type == "rain" -> listOf(
-            Activity(
-                name = "Museum Marathon",
-                description = "Visit 3+ museums in one day",
-                imageRes = R.drawable.museum_marathon,
-                category = listOf("culture", "indoor"),
-                priceLevel = 2
-            ),
-            Activity(
-                name = "Tea Ceremony Workshop",
-                description = "Learn traditional brewing techniques",
-                imageRes = R.drawable.tea_workshop,
-                category = listOf("wellness", "educational")
-            )
-        )
-
-        // ==== Default Suggestions ==== [UPDATED]
-        else -> listOf(
-            Activity(
-                name = "Local Café Tour",
-                description = "Discover hidden gems in your city",
-                imageRes = R.drawable.cafe_tour,
-                category = listOf("food", "social")
-            ),
-            Activity(
-                name = "Book Club",
-                description = "Join a literary discussion group",
-                imageRes = R.drawable.book_club,
-                category = listOf("indoor", "social")
-            )
-        )
-    }
-}
-
-@Composable
-fun ActivityList(activities: List<Activity>) {
-    LazyColumn (
-        modifier = Modifier.fillMaxWidth()
-    ) {
-
-        //Group activities by category
-        val groupedActivities = activities.groupBy { it.category.first() }
-
-        groupedActivities.forEach { (category, items) ->
-            item {
-                Text(
-                    text = "${category.replaceFirstChar { it.uppercase() }} Activities",
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = Color.White,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
-            }
-
-            items(items) {activity ->
-                ActivityCard(activity=activity, onClick = {/*Handle click event*/})
-                Spacer(modifier = Modifier.height(8.dp))
-
-            }
-
-        }
-
-    }
-}
-
-@Composable
-fun ActivityCard(activity: Activity, onClick: () -> Unit) {
+private fun ActivityCard(
+    activity: Activity,
+    onClick: () -> Unit = {}
+) {
     Card(
         modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .clickable {onClick()}
-                    .padding(8.dp),
-
+            .fillMaxWidth()
+            .height(160.dp)
+            .padding(horizontal = 16.dp)
+            .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White.copy(alpha = 0.2f),
+            containerColor = Color.White.copy(alpha = 0.1f),
             contentColor = Color.White
         ),
-
-        elevation  = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(0.dp) // Removed shadow
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier = Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically
-        )
-        {Box(
-            modifier = Modifier
-                .size(width = 120.dp, height = 120.dp)
-                .clip(MaterialTheme.shapes.medium)
-
-        )
-        {
+        ) {
             Image(
                 painter = painterResource(id = activity.imageRes),
                 contentDescription = activity.name,
                 modifier = Modifier
-                    .fillMaxSize(),
-                contentScale = ContentScale.Fit
+                    .width(120.dp)
+                    .fillMaxHeight(),
+                contentScale = ContentScale.Crop
             )
-        }
 
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Column (
+            Column(
                 modifier = Modifier
+                    .padding(16.dp)
                     .weight(1f)
-                    .height(120.dp),
-                verticalArrangement = Arrangement.SpaceBetween
-
             ) {
-                Column {
                 Text(
                     text = activity.name,
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-
                 Text(
                     text = activity.description,
                     style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 3,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
-                    Spacer(modifier = Modifier.height(4.dp))
+
+                // Additional info chips
+                Row(
+                    modifier = Modifier.padding(top = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    activity.category.take(2).forEach { category ->
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(Color.White.copy(alpha = 0.2f))
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = category,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = Color.White
+                            )
+                        }
+                    }
                 }
-
-
             }
         }
     }
 }
-
