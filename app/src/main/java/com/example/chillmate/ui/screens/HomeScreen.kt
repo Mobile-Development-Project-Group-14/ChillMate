@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -33,6 +34,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
@@ -46,15 +51,22 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.chillmate.R
+import com.example.chillmate.model.Activity
 import com.example.chillmate.model.WeatherData
 import com.example.chillmate.ui.ErrorScreen
 import com.example.chillmate.ui.LoadingScreen
 import com.example.chillmate.ui.theme.AppTheme.dayColors
 import com.example.chillmate.ui.theme.AppTheme.nightColors
 import com.example.chillmate.ui.weather.DailyForecast
+import com.example.chillmate.ui.weather.getActivitySuggestions
+import com.example.chillmate.ui.weather.getCurrentWeatherCondition
 import com.example.chillmate.viewmodel.AlertSeverity
 import com.example.chillmate.viewmodel.WeatherUiState
 import com.example.chillmate.viewmodel.WeatherViewModel
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableIntStateOf
+import kotlinx.coroutines.delay
+import androidx.compose.runtime.setValue
 
 @Composable
 fun HomeScreen(
@@ -144,6 +156,19 @@ fun WeatherContent(
     val animationResId = getWeatherAnimation(data.current.weather_code, isDay)
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(animationResId))
 
+    //Get weather conditions and activities
+    val weatherCondition= getCurrentWeatherCondition(viewModel)
+    val activities = remember { getActivitySuggestions(weatherCondition) }
+    var currentSlide by remember {mutableStateOf(0)}
+
+    //Auto-slide effect
+    LaunchedEffect(Unit) {
+        while (true) {
+        delay(7000)
+        currentSlide= (currentSlide + 1) % activities.size
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -202,31 +227,43 @@ fun WeatherContent(
                             .padding(vertical = 8.dp),
                         Arrangement.SpaceBetween
                     ) {
-                        // Outfit Guide Image
-                        Image(
-                            painter = painterResource(id = viewModel.currentOutfitImage),
-                            contentDescription = "Outfit Guide Image",
+                        Box(
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(end = 8.dp)
+                                .aspectRatio(.5f)
                                 .clip(RoundedCornerShape(16.dp))
                                 .clickable { navController.navigate("outfitGuide") }
-                                .aspectRatio(.5f),
-                            contentScale = ContentScale.Crop
-                        )
+                                .background(Color.White.copy(alpha = 0.2f))
 
-                        // Today's Activity Image
-                        Image(
-                            painter = painterResource(id = R.drawable.todayactivity),
-                            contentDescription = "Today's Activities Image",
+                        ) {
+                            // Outfit Guide Image
+                            Image(
+                                painter = painterResource(id = viewModel.currentOutfitImage),
+                                contentDescription = "Outfit Guide Image",
+                                modifier = Modifier.fillMaxSize()
+
+                            )
+                        }
+
+
+                        // Today's Activity Slideshow
+                        Box(
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(start = 8.dp)
+                                .aspectRatio(.5f)
                                 .clip(RoundedCornerShape(16.dp))
                                 .clickable { navController.navigate("todayActivity") }
-                                .aspectRatio(.5f),
-                            contentScale = ContentScale.Crop
-                        )
+                                .background(Color.White.copy(alpha = 0.2f))
+                        ) {
+                            Image(
+                                painter = painterResource(id = activities[currentSlide].imageRes),
+                                contentDescription = activities[currentSlide].name,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
                     }
 
                     Row(
@@ -281,6 +318,28 @@ fun WeatherContent(
         }
     )
 }
+
+
+@Composable
+fun ActivitySlideShow(
+    activity: Activity,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = Modifier
+            .background(Color.White.copy(alpha = 0.2f))
+    ) {
+        Image(
+            painter = painterResource(id = activity.imageRes),
+            contentDescription = activity.name,
+            modifier = modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+
+
+    }
+}
+
 
 private fun getWeatherAnimation(weatherCode: Int, isDay: Boolean): Int {
     return when (weatherCode) {
