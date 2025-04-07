@@ -136,7 +136,7 @@ private fun ClothingItemCard(outfit: Outfit) {
     Card(
         shape = RoundedCornerShape(10.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White.copy(alpha = 0.2f),
+            containerColor = Color.White,
             contentColor = Color.White
         ),
         modifier = Modifier
