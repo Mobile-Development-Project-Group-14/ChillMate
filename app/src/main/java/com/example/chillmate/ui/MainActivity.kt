@@ -3,11 +3,13 @@ package com.example.chillmate.ui
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -29,9 +31,9 @@ import com.example.chillmate.ui.screens.ShopScreen
 import com.example.chillmate.ui.screens.TodayActivityScreen
 import com.example.chillmate.ui.screens.TravelGuideScreen
 import com.example.chillmate.ui.theme.ChillMateTheme
+import com.example.chillmate.viewmodel.TravelGuideViewModel
 import com.example.chillmate.viewmodel.WeatherViewModel
 import com.google.android.gms.location.LocationServices
-
 
 class MainActivity : ComponentActivity() {
     private val locationPermissionLauncher = registerForActivityResult(
@@ -44,6 +46,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -55,10 +58,12 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ChillMateApp(locationPermissionLauncher: androidx.activity.result.ActivityResultLauncher<Array<String>>) {
     val navController = rememberNavController()
     val viewModel: WeatherViewModel = viewModel()
+    val travelGuideViewModel: TravelGuideViewModel = viewModel()
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
@@ -98,7 +103,7 @@ fun ChillMateApp(locationPermissionLauncher: androidx.activity.result.ActivityRe
             ShopScreen(navController = navController, viewModel = viewModel)
         }
         composable("travelGuide") {
-            TravelGuideScreen(navController, viewModel)
+            TravelGuideScreen(viewModel = travelGuideViewModel)
         }
     }
 }

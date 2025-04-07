@@ -11,7 +11,9 @@ interface WeatherApi {
         @Query("longitude") longitude: Double,
         @Query("current") current: String,
         @Query("daily") daily: String,
-        @Query("forecast_days") forecast_days: Int
+        @Query("start_date") startDate: String? = null,
+        @Query("end_date") endDate: String? = null,
+        @Query("forecast_days") forecast_days: Int? = null
     ): WeatherData
 }
 
