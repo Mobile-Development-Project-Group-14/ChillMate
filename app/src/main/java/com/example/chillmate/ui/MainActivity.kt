@@ -23,6 +23,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.chillmate.model.Activity
+import com.example.chillmate.ui.screens.ActivityDetailScreen
 import com.example.chillmate.ui.screens.HomeScreen
 import com.example.chillmate.ui.screens.OutfitGuideScreen
 import com.example.chillmate.ui.screens.ShopScreen
@@ -94,6 +96,15 @@ fun ChillMateApp(locationPermissionLauncher: androidx.activity.result.ActivityRe
             TodayActivityScreen(navController=navController, viewModel=viewModel)
         }
 
+        composable("activityDetails") {
+            // Get the activity from previous back stack entry
+            val activity = navController.previousBackStackEntry?.savedStateHandle?.get<Activity>("activity")
+            ActivityDetailScreen(
+                navController = navController,
+                activity = activity
+            )
+        }
+
         composable("shop") {
             ShopScreen(navController = navController, viewModel = viewModel)
         }
@@ -102,6 +113,8 @@ fun ChillMateApp(locationPermissionLauncher: androidx.activity.result.ActivityRe
         }
     }
 }
+
+
 
 private fun fetchLocation(
     context: Context,
