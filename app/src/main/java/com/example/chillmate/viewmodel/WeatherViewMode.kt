@@ -3,6 +3,7 @@ package com.example.chillmate.viewmodel
 import WeatherApiService
 import android.app.Application
 import android.location.Geocoder
+import android.os.Build
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -38,7 +39,6 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
 
     // UI state
     private var currentLocation by mutableStateOf(defaultLocation)
-        private set
     var currentOutfitImage by mutableIntStateOf(R.drawable.mild)
         private set
 
@@ -154,11 +154,30 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
     private fun updateLocationName(latitude: Double, longitude: Double) {
         viewModelScope.launch {
             _locationName.value = try {
-                val geocoder = Geocoder(getApplication<Application>().applicationContext)
-                val addresses = geocoder.getFromLocation(latitude, longitude, 1)
-                addresses?.firstOrNull()?.let { address ->
-                    address.locality ?: address.subAdminArea ?: address.adminArea ?: "$latitude, $longitude"
-                } ?: "$latitude, $longitude"
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    val geocoder = Geocoder(getApplication<Application>().applicationContext)
+                    val listener = object : Geocoder.GeocodeListener {
+                        override fun onGeocode(addresses: MutableList<android.location.Address>) {
+                            _locationName.value = addresses.firstOrNull()?.let { address ->
+                                address.locality ?: address.subAdminArea ?: address.adminArea ?: "$latitude, $longitude"
+                            } ?: "$latitude, $longitude"
+                        }
+
+                        override fun onError(errorMessage: String?) {
+                            _locationName.value = "$latitude, $longitude"
+                        }
+                    }
+                    geocoder.getFromLocation(latitude, longitude, 1, listener)
+                    "$latitude, $longitude" // Temporary value until callback completes
+                } else {
+                    // Fallback for older versions
+                    val geocoder = Geocoder(getApplication<Application>().applicationContext)
+                    @Suppress("DEPRECATION")
+                    val addresses = geocoder.getFromLocation(latitude, longitude, 1)
+                    addresses?.firstOrNull()?.let { address ->
+                        address.locality ?: address.subAdminArea ?: address.adminArea ?: "$latitude, $longitude"
+                    } ?: "$latitude, $longitude"
+                }
             } catch (e: IOException) {
                 "$latitude, $longitude"
             }
