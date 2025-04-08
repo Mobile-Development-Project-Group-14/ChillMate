@@ -18,21 +18,11 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,15 +34,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.chillmate.R
+import com.example.chillmate.ui.components.ChillMateScaffold
 import com.example.chillmate.ui.theme.AppTheme
 import com.example.chillmate.viewmodel.WeatherUiState
 import com.example.chillmate.viewmodel.WeatherViewModel
-import com.example.chillmate.ui.components.ChillMateScaffold
 
 
 data class Outfit(val name: String, val description: String, val imageRes: Int)
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OutfitGuideScreen(navController: NavController, weatherViewModel: WeatherViewModel) {
     val isDay = when (val state = weatherViewModel.weatherUiState) {
@@ -215,7 +204,7 @@ fun getAccessoryItems(temperature: Double): List<Outfit> {
             Outfit("Winter Gloves", "More warmer!", R.drawable.wintergloves),
             Outfit("Winter Jacket", "Cozy!", R.drawable.winterjacket),
             Outfit("Thermal layers", "Layer up!", R.drawable.thermallayers),
-            Outfit("wool socks", "Warm feets!", R.drawable.wintersocks)
+            Outfit("wool socks", "Warm feet!", R.drawable.wintersocks)
         )
         temperature in -14.0..-10.0 -> listOf(
             Outfit("Scarf", "A stylish shield from cold.", R.drawable.scarf),
@@ -241,14 +230,14 @@ fun getAccessoryItems(temperature: Double): List<Outfit> {
         temperature in 0.1..5.0 -> listOf(
             Outfit("Light Jacket", "A stylish shield from cold.", R.drawable.lightjacket),
             Outfit("shoes", "Essential  footwear.", R.drawable.sneakers) ,
-            Outfit("Hoddie", "Beat the cold!", R.drawable.hoddie),
+            Outfit("Hoodie", "Beat the cold!", R.drawable.hoddie),
             Outfit("Jeans", "Wear a trendy jean.", R.drawable.jeans),
 
             )
         temperature in 5.1..10.0 -> listOf(
             Outfit("shoes", "Essential  footwear.", R.drawable.sneakers) ,
             Outfit("Sweater", "Beat the cold!", R.drawable.sweater),
-            Outfit("Hoddie", "Beat the cold!", R.drawable.hoddie),
+            Outfit("Hoodie", "Beat the cold!", R.drawable.hoddie),
             Outfit("Light Jacket", "A stylish shield from cold.", R.drawable.lightjacket),
             Outfit("Jeans", "Wear a trendy jean.", R.drawable.jeans),
             Outfit("Sunglasses", "Stylish and protective.", R.drawable.sunglasses)
