@@ -116,21 +116,21 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
 
         // Precipitation alerts (existing code)
         if (daily.precipitation_sum.size > 1) {
-            val tomorrowPrecip = daily.precipitation_sum[1]
+            val tomorrowPrecipice = daily.precipitation_sum[1]
             val isSnow = weatherData.current.weather_code in listOf(71, 73, 75, 77, 85, 86)
 
             when {
-                tomorrowPrecip >= 15 -> alerts.add(
+                tomorrowPrecipice >= 15 -> alerts.add(
                     WeatherAlert(
                         if (isSnow) "Heavy Snow Alert" else "Heavy Rain Alert",
-                        "${"%.1f".format(tomorrowPrecip)}mm ${if (isSnow) "snow" else "rain"} expected tomorrow",
+                        "${"%.1f".format(tomorrowPrecipice)}mm ${if (isSnow) "snow" else "rain"} expected tomorrow",
                         AlertSeverity.SEVERE
                     )
                 )
-                tomorrowPrecip >= 5 -> alerts.add(
+                tomorrowPrecipice >= 5 -> alerts.add(
                     WeatherAlert(
                         if (isSnow) "Snow Alert" else "Rain Alert",
-                        "${"%.1f".format(tomorrowPrecip)}mm ${if (isSnow) "snow" else "rain"} expected tomorrow",
+                        "${"%.1f".format(tomorrowPrecipice)}mm ${if (isSnow) "snow" else "rain"} expected tomorrow",
                         AlertSeverity.MODERATE
                     )
                 )
