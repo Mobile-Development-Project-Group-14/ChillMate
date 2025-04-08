@@ -30,7 +30,7 @@ class TravelGuideViewModel : ViewModel() {
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
-    private val maxFutureDays = 16 // Maximum forecast days according to Open-Meteo API
+    private val maxFutureDays = 16
 
     private val geoNamesService = Retrofit.Builder()
         .baseUrl("http://geodb-free-service.wirefreethought.com/")
@@ -41,7 +41,16 @@ class TravelGuideViewModel : ViewModel() {
     fun selectCity(city: City) {
         _selectedCity.value = city
         _cities.value = emptyList()
-        _errorMessage.value = null // Clear previous errors when selecting new city
+        _errorMessage.value = null
+    }
+
+
+    fun clearState() {
+        _selectedCity.value = null
+        _selectedDates.value = null
+        _weatherData.value = null
+        _errorMessage.value = null
+        _cities.value = emptyList()
     }
 
     fun searchCities(query: String) {
@@ -84,12 +93,18 @@ class TravelGuideViewModel : ViewModel() {
             !isDateRangeValid(dates.first, dates.second) -> {
                 val today = LocalDate.now()
                 val maxDate = today.plusDays(maxFutureDays.toLong())
-                _errorMessage.value = "Dates must be between ${today} and ${maxDate}"
+                _errorMessage.value = "Dates must be between $today and $maxDate"
             }
             else -> {
                 _errorMessage.value = null
                 viewModelScope.launch {
                     try {
+                        val today = LocalDate.now()
+                        val maxAllowedDate = today.plusDays(maxFutureDays.toLong())
+                        if (dates.second == maxAllowedDate) {
+                            // Handle edge case for maximum date
+                            _errorMessage.value = "Fetching weather data for maximum date range..."
+                        }
                         val response = WeatherApiService.instance.getWeatherData(
                             latitude = city.lat,
                             longitude = city.lon,
@@ -98,10 +113,18 @@ class TravelGuideViewModel : ViewModel() {
                             startDate = dates.first.toString(),
                             endDate = dates.second.toString()
                         )
+                        // Additional validation of the response
+                        if (response.daily.time.isEmpty()) {
+                            throw Exception("No weather data available for selected dates")
+                        }
                         _weatherData.value = response
                     } catch (e: Exception) {
                         _weatherData.value = null
-                        _errorMessage.value = "Failed to get weather data: ${e.message}"
+                        _errorMessage.value = when {
+                            e.message?.contains("404") == true -> "Weather data not available for selected location/dates"
+                            e.message?.contains("400") == true -> "Invalid date range requested"
+                            else -> "Failed to get weather data: ${e.message ?: "Unknown error"}"
+                        }
                     }
                 }
             }
@@ -111,8 +134,9 @@ class TravelGuideViewModel : ViewModel() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun isDateRangeValid(start: LocalDate, end: LocalDate): Boolean {
         val today = LocalDate.now()
+        val maxAllowedDate = today.plusDays(maxFutureDays.toLong())
         return !start.isBefore(today) &&
-                !end.isAfter(today.plusDays(maxFutureDays.toLong())) &&
+                !end.isAfter(maxAllowedDate) &&  // Changed from isAfter to !isAfter
                 !start.isAfter(end)
     }
 }

@@ -17,7 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -50,7 +50,6 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.chillmate.R
-import com.example.chillmate.model.Activity
 import com.example.chillmate.model.WeatherData
 import com.example.chillmate.ui.ErrorScreen
 import com.example.chillmate.ui.LoadingScreen
@@ -175,7 +174,7 @@ fun WeatherContent(
                 ),
                 navigationIcon = {
                     IconButton(onClick = { /* Menu */ }) {
-                        Icon(Icons.Default.Menu, "Menu", tint = Color.White)
+                        Icon(Icons.Default.Home, "Menu", tint = Color.White)
                     }
                 }
             )
@@ -288,28 +287,6 @@ fun WeatherContent(
         }
     )
 }
-
-
-@Composable
-fun ActivitySlideShow(
-    activity: Activity,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = Modifier
-            .background(Color.White.copy(alpha = 0.2f))
-    ) {
-        Image(
-            painter = painterResource(id = activity.imageRes),
-            contentDescription = activity.name,
-            modifier = modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
-
-
-    }
-}
-
 
 private fun getWeatherAnimation(weatherCode: Int, isDay: Boolean): Int {
     return when (weatherCode) {

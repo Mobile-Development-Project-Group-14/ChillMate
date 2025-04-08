@@ -32,6 +32,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -64,6 +65,10 @@ fun TravelGuideScreen(
     val isDay = when (val state = weatherViewModel.weatherUiState) {
         is WeatherUiState.Success -> state.data.current.is_day == 1
         else -> true
+    }
+
+    LaunchedEffect(Unit) {
+        travelGuideViewModel.clearState()
     }
 
     ChillMateScaffold(
