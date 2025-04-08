@@ -32,6 +32,26 @@ object AppTheme {
     fun getTopBarColor(isDay: Boolean): Color {
         return if (isDay) dayColors[2] else nightColors[1]
     }
+
+    fun getTextColor(day: Boolean): Color {
+        return if (day) Color(0xFF000000) else Color(0xFFFFFFFF)
+    }
+
+    fun getButtonColor(day: Boolean): Color {
+        return if (day) Color(0xFF419BFF) else Color(0xFF6B4F4F)
+    }
+
+    fun getButtonTextColor(day: Boolean): Color {
+        return if (day) Color(0xFFFFFFFF) else Color(0xFF000000)
+    }
+
+    fun getCardColor(day: Boolean): Color {
+        return if (day) Color(0xFF74B6FF) else Color(0xFF9F6060)
+    }
+
+    fun getSecondaryTextColor(day: Boolean): Color {
+        return if (day) Color(0xFF000000) else Color(0xFFB0B0B0)
+    }
 }
 
 @Composable

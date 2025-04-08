@@ -114,7 +114,11 @@ fun ChillMateApp(locationPermissionLauncher: androidx.activity.result.ActivityRe
             ShopScreen(navController = navController, viewModel = viewModel)
         }
         composable("travelGuide") {
-            TravelGuideScreen(viewModel = travelGuideViewModel)
+            TravelGuideScreen(
+                navController = navController,
+                weatherViewModel = viewModel,
+                travelGuideViewModel = travelGuideViewModel
+            )
         }
     }
 }
