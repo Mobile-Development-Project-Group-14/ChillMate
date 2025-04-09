@@ -34,6 +34,11 @@
 - Vacation wardrobe planner
 - Packing list generator
 
+## Flowchart
+
+![Flowchart](docs/Flow%20Chart.png)
+
+
 ## Team
 
 | Name               | GitHub Name      | Role                           |
