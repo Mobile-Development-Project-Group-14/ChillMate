@@ -1,14 +1,12 @@
 
 package com.example.chillmate.ui.screens
 
-import androidx.compose.foundation.Image
+
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -38,11 +36,8 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.airbnb.lottie.compose.LottieAnimation
@@ -53,6 +48,7 @@ import com.example.chillmate.R
 import com.example.chillmate.model.WeatherData
 import com.example.chillmate.ui.ErrorScreen
 import com.example.chillmate.ui.LoadingScreen
+import com.example.chillmate.ui.components.ImageCard
 import com.example.chillmate.ui.theme.AppTheme.dayColors
 import com.example.chillmate.ui.theme.AppTheme.nightColors
 import com.example.chillmate.ui.weather.DailyForecast
@@ -216,49 +212,25 @@ fun WeatherContent(
 
                     DailyForecast(daily = data.daily)
 
-                    Row(
-                        Modifier
+                    Row (
+                        modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 8.dp),
-                        Arrangement.SpaceBetween
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(end = 8.dp)
-                                .aspectRatio(.5f)
-                                .clip(RoundedCornerShape(16.dp))
-                                .clickable { navController.navigate("outfitGuide") }
-                                .background(Color.White.copy(alpha = 0.2f))
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ){
+                        ImageCard(
+                            modifier = Modifier.weight(1f).padding(end = 8.dp),
+                            imageRes = viewModel.currentOutfitImage,
+                            onClick = { navController.navigate("outfitGuide") },
+                            contentDescription = "Outfit Guide",
+                        )
 
-                        ) {
-                            // Outfit Guide Image
-                            Image(
-                                painter = painterResource(id = viewModel.currentOutfitImage),
-                                contentDescription = "Outfit Guide Image",
-                                modifier = Modifier.fillMaxSize()
-
-                            )
-                        }
-
-
-                        // Today's Activity Slideshow
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(start = 8.dp)
-                                .aspectRatio(.5f)
-                                .clip(RoundedCornerShape(16.dp))
-                                .clickable { navController.navigate("todayActivity") }
-                                .background(Color.White.copy(alpha = 0.2f))
-                        ) {
-                            Image(
-                                painter = painterResource(id = activities[currentSlide].imageRes),
-                                contentDescription = activities[currentSlide].name,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        }
+                        ImageCard(
+                            modifier = Modifier.weight(1f).padding(start = 8.dp),
+                            imageRes = activities[currentSlide].imageRes,
+                            onClick = {navController.navigate("todayActivity") },
+                            contentDescription = activities[currentSlide].name,
+                        )
                     }
 
                     Row(

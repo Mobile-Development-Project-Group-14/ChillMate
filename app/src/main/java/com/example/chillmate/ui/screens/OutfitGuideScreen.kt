@@ -7,11 +7,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -20,12 +20,11 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -49,27 +48,23 @@ fun OutfitGuideScreen(navController: NavController, weatherViewModel: WeatherVie
         else -> true
     }
 
+    val temperature = when (val state = weatherViewModel.weatherUiState) {
+        is WeatherUiState.Success -> state.data.current.temperature_2m
+        else -> 20.0
+    }
+
     ChillMateScaffold(
         navController = navController,
         isDay = isDay,
         title = "Outfit Guide"
     ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(AppTheme.getBackgroundGradient(isDay))
-                .padding(paddingValues)
-        ) {
-            Column(
+        Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                val temperature = weatherViewModel.weatherUiState.let { state ->
-                    if (state is WeatherUiState.Success) state.data.current.temperature_2m else 20.0
-                }
-
+                    .background(AppTheme.getBackgroundGradient(isDay))
+                    .padding(paddingValues)
+                    .padding(16.dp)
+        )   {
                 Text(
                     text = "Style It Right!",
                     fontSize = 28.sp,
@@ -80,7 +75,11 @@ fun OutfitGuideScreen(navController: NavController, weatherViewModel: WeatherVie
 
                 ClothingCarousel(getAccessoryItems(temperature))
 
-                LazyColumn(modifier = Modifier.weight(1f)) {
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                )
+                {
                     itemsIndexed(getOutfitSuggestions(temperature)) { index, outfit ->
                         OutfitItem(
                             outfit = outfit,
@@ -104,7 +103,7 @@ fun OutfitGuideScreen(navController: NavController, weatherViewModel: WeatherVie
             }
         }
     }
-}
+
 
 @Composable
 private fun ClothingCarousel(accessoryItems: List<Outfit>) {
@@ -122,74 +121,78 @@ private fun ClothingCarousel(accessoryItems: List<Outfit>) {
 
 @Composable
 private fun ClothingItemCard(outfit: Outfit) {
-    Card(
-        shape = RoundedCornerShape(10.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White,
-            contentColor = Color.White
-        ),
+
+    Box(
         modifier = Modifier
             .width(90.dp)
             .height(95.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .background(Color.White.copy(alpha = 0.2f))
     ) {
         Column(
             modifier = Modifier.padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Transparent)
+            ) {
             Image(
                 painter = painterResource(outfit.imageRes),
                 contentDescription = outfit.name,
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
-                    .size(70.dp)
-                    .padding(4.dp)
+                    .fillMaxSize()
+                    .background(Color.Transparent)
             )
+            }
             Text(
                 text = outfit.name,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
-            )
+                )
+            }
         }
     }
-}
 
 @Composable
 private fun OutfitItem(outfit: Outfit, isHighlighted: Boolean = false) {
-    Card(
-        shape = RoundedCornerShape(10.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White.copy(alpha = if (isHighlighted) 0.3f else 0.2f),
-            contentColor = Color.White
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .background(Color.White.copy(alpha = if (isHighlighted)0.3f else 0.2f) )
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Image(
-                painter = painterResource(outfit.imageRes),
-                contentDescription = outfit.name,
-                contentScale = ContentScale.Fit,
+       Column(modifier = Modifier.padding(16.dp)) {
+
+
+           Image(
+               painter = painterResource(outfit.imageRes),
+               contentDescription = outfit.name,
+               contentScale = ContentScale.FillWidth,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(280.dp)
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(
-                text = outfit.name,
-                fontWeight = FontWeight.Bold,
-                fontSize = 22.sp,
-                color = Color.White
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
+                     .fillMaxWidth()
+                     .aspectRatio(2f / 3f)
+                     .clip(RoundedCornerShape(8.dp))
+           )
+           Spacer(modifier = Modifier.height(12.dp))
+           Text(
+               text = outfit.name,
+               fontWeight = FontWeight.Bold,
+               fontSize = 22.sp,
+               color = Color.White
+           )
+              Spacer(modifier = Modifier.height(6.dp))
+              Text(
                 text = outfit.description,
                 fontSize = 16.sp,
                 color = Color.White.copy(alpha = 0.8f)
-            )
-        }
+              )
+       }
     }
 }
 
