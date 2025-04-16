@@ -193,12 +193,12 @@ fun WeatherContent(
                     Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween) {
                         Column {
                             Text(
-                                "${data.current.temperature_2m}${data.current_units.temperature_2m}",
+                                text = "${data.current.temperature_2m.toInt()}${data.current_units.temperature_2m}",
                                 style = MaterialTheme.typography.displayLarge,
                                 color = Color.White
                             )
                             Text(
-                                "Feels like ${data.current.apparent_temperature}${data.current_units.temperature_2m}",
+                                "Feels like ${data.current.apparent_temperature.toInt()}${data.current_units.temperature_2m}",
                                 style = MaterialTheme.typography.titleLarge,
                                 color = Color.White
                             )
