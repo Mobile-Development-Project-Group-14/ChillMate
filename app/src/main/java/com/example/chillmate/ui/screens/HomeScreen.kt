@@ -247,8 +247,8 @@ fun WeatherContent(
                                 .padding(vertical = 8.dp),
                             shape = RoundedCornerShape(8.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.White,
-                                contentColor = Color(0xFF4B6CB7)
+                                containerColor = Color.White.copy(alpha = 0.2f),
+                                contentColor = Color.White
                             )
                         ) {
                             Text("Travel Guide")
