@@ -90,7 +90,6 @@ fun ActivityDetailScreen(
     }
 }
 
-
 @Composable
 private fun ActivityDetailContent(
     activity: Activity,
