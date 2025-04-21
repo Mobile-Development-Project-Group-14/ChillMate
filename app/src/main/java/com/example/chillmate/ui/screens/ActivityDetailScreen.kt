@@ -114,6 +114,7 @@ private fun ActivityDetailContent(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
+        
     ) {
         Box(
             modifier = Modifier
