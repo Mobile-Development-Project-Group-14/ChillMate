@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
@@ -34,9 +35,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.airbnb.lottie.compose.LottieAnimation
@@ -196,12 +197,12 @@ fun WeatherContent(
                     Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween) {
                         Column {
                             Text(
-                                text = "${data.current.temperature_2m.toInt()}${data.current_units.temperature_2m}",
+                                "${data.current.temperature_2m}${data.current_units.temperature_2m}",
                                 style = MaterialTheme.typography.displayLarge,
                                 color = Color.White
                             )
                             Text(
-                                "Feels like ${data.current.apparent_temperature.toInt()}${data.current_units.temperature_2m}",
+                                "Feels like ${data.current.apparent_temperature}${data.current_units.temperature_2m}",
                                 style = MaterialTheme.typography.titleLarge,
                                 color = Color.White
                             )
@@ -229,10 +230,17 @@ fun WeatherContent(
                         )
 
                         ImageCard(
-                            modifier = Modifier.weight(1f).padding(start = 8.dp),
                             imageRes = activities[currentSlide].imageRes,
-                            onClick = {navController.navigate("todayActivity") },
+                            onClick = { navController.navigate("todayActivity") },
                             contentDescription = activities[currentSlide].name,
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(start = 8.dp),
+                            title = activities[currentSlide].name,
+                            description = activities[currentSlide].description,
+                            showSlideIndicators = true,
+                            totalSlides = activities.size,
+                            currentSlide = currentSlide
                         )
                     }
 
@@ -250,8 +258,8 @@ fun WeatherContent(
                                 .padding(vertical = 8.dp),
                             shape = RoundedCornerShape(8.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.White.copy(alpha = 0.2f),
-                                contentColor = Color.White
+                                containerColor = Color.White,
+                                contentColor = Color(0xFF4B6CB7)
                             )
                         ) {
                             Text("Travel Guide")
