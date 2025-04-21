@@ -17,18 +17,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -42,6 +35,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.chillmate.model.Activity
+import com.example.chillmate.ui.components.ChillMateScaffold
 import com.example.chillmate.ui.theme.AppTheme
 import com.example.chillmate.viewmodel.WeatherViewModel
 import com.example.chillmate.viewmodel.WeatherUiState
@@ -50,96 +44,88 @@ import com.example.chillmate.ui.weather.getActivitySuggestions
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodayActivityScreen(navController: NavController, viewModel: WeatherViewModel) {
+fun TodayActivityScreen(
+    navController: NavController,
+    viewModel: WeatherViewModel
+) {
     val isDay = when (val state = viewModel.weatherUiState) {
         is WeatherUiState.Success -> state.data.current.is_day == 1
         else -> true
     }
 
-    val backgroundGradient = AppTheme.getBackgroundGradient(isDay)
-    val weatherCondition = getCurrentWeatherCondition(viewModel)
-    val activities = remember { getActivitySuggestions(weatherCondition) }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        "Today's Activities",
-                        color = Color.White,
-                        style = MaterialTheme.typography.headlineSmall
-                    )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = AppTheme.getTopBarColor(isDay),
-                    titleContentColor = Color.White
-                ),
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = Color.White
-                        )
-                    }
-                }
-            )
-        }
+    ChillMateScaffold(
+        navController = navController,
+        isDay = isDay,
+        title = "Today's Activities",
+        showBackButton = true
     ) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(brush = backgroundGradient)
+                .background(AppTheme.getBackgroundGradient(isDay))
+                .padding(paddingValues)
         ) {
-            if (activities.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    contentAlignment = Alignment.Center
-                ) {
+            TodayActivityContent(navController, viewModel, isDay)
+        }
+    }
+}
+
+@Composable
+private fun TodayActivityContent(
+    navController: NavController,
+    viewModel: WeatherViewModel,
+    isDay: Boolean
+) {
+    val weatherCondition = getCurrentWeatherCondition(viewModel)
+    val activities = remember { getActivitySuggestions(weatherCondition) }
+
+    if (activities.isEmpty()) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "No activities found for current weather",
+                color = Color.White,
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+    } else {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            // Group activities by category
+            val groupedActivities = activities.groupBy { it.category.first() }
+
+            groupedActivities.forEach { (category, items) ->
+                item {
                     Text(
-                        text = "No activities found for current weather",
+                        text = "${category.replaceFirstChar { it.uppercase() }} Activities",
+                        style = MaterialTheme.typography.titleMedium,
                         color = Color.White,
-                        style = MaterialTheme.typography.bodyLarge
+                        modifier = Modifier.padding(
+                            horizontal = 16.dp,
+                            vertical = 8.dp
+                        )
                     )
                 }
-            } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .padding(paddingValues)
-                        .fillMaxSize()
-                ) {
-                    // Group activities by category
-                    val groupedActivities = activities.groupBy { it.category.first() }
 
-                    groupedActivities.forEach { (category, items) ->
-                        item {
-                            Text(
-                                text = "${category.replaceFirstChar { it.uppercase() }} Activities",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = Color.White,
-                                modifier = Modifier.padding(
-                                    horizontal = 16.dp,
-                                    vertical = 8.dp
-                                )
+                items(items) { activity ->
+                    ActivityCard(
+                        activity = activity,
+                        isDay = isDay,
+                        onClick = {
+                            navController.currentBackStackEntry?.savedStateHandle?.set(
+                                "activity",
+                                activity
                             )
+                            navController.navigate("activityDetails")
                         }
-
-                        items(items) { activity ->
-                            ActivityCard(
-                                activity = activity,
-                                onClick = {
-                                    navController.currentBackStackEntry?.savedStateHandle?.set(
-                                        "activity",
-                                        activity
-                                    )
-                                    navController.navigate("activityDetails")
-                                }
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                        }
-                    }
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
         }
@@ -149,13 +135,13 @@ fun TodayActivityScreen(navController: NavController, viewModel: WeatherViewMode
 @Composable
 private fun ActivityCard(
     activity: Activity,
+    isDay: Boolean,
     onClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .height(160.dp)
-            .padding(horizontal = 16.dp)
             .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(
             containerColor = Color.White.copy(alpha = 0.1f),
