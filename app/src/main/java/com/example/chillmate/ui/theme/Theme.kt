@@ -10,6 +10,18 @@ import androidx.compose.ui.graphics.Color
 
 object AppTheme {
     val dayColors = listOf(
+        Color(0xFF9A52C7), // Electric Violet
+        Color(0xFF58126A), // Dusty Rose
+        Color(0xFF4A1764)  // Soft Periwinkle
+
+
+        // orange to blue gradient
+        //  Color(0xFFFFE0B2),  // Light orange
+        // Color(0xFFFFB74D),  // Medium orange
+        // Color(0xFFFF9800),  // Dark orange
+        //Color(0xFFC0DEFF),  // Light blue
+        //Color(0xFF74B6FF),  // Medium blue
+        //Color(0xFF419BFF)   // Dark blue
 
 
     )
@@ -37,7 +49,7 @@ object AppTheme {
     }
 
     fun getButtonColor(day: Boolean): Color {
-
+        return if (day) Color(0xFF58126A) else Color(0xFF6B4F4F)
     }
 
     fun getButtonTextColor(day: Boolean): Color {
