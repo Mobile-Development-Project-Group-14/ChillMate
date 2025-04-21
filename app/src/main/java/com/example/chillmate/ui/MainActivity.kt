@@ -106,6 +106,7 @@ fun ChillMateApp(locationPermissionLauncher: androidx.activity.result.ActivityRe
             val activity = navController.previousBackStackEntry?.savedStateHandle?.get<Activity>("activity")
             ActivityDetailScreen(
                 navController = navController,
+                viewModel = viewModel,
                 activity = activity
             )
         }

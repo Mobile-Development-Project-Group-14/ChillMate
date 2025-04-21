@@ -21,16 +21,30 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.chillmate.model.Activity
 import com.example.chillmate.ui.theme.AppTheme
+import com.example.chillmate.viewmodel.WeatherUiState
+import com.example.chillmate.viewmodel.WeatherViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActivityDetailScreen(
     navController: NavController,
+    viewModel: WeatherViewModel = viewModel(),
     activity: Activity?
+
+
 ) {
+    val isDay = when (val state = viewModel.weatherUiState) {
+        is WeatherUiState.Success -> state.data.current.is_day == 1
+        else -> true // Default to day theme if no data
+    }
+
+    val backgroundGradient = AppTheme.getBackgroundGradient(isDay)
+
+
     if (activity == null) {
         Box(
             modifier = Modifier
@@ -47,8 +61,7 @@ fun ActivityDetailScreen(
         return
     }
 
-    val isNightTheme = activity.category.any { it.contains("night", ignoreCase = true) }
-    val backgroundGradient = AppTheme.getBackgroundGradient(!isNightTheme)
+
 
     Scaffold(
         topBar = {
@@ -84,6 +97,7 @@ fun ActivityDetailScreen(
         ) {
             ActivityDetailContent(
                 activity = activity,
+                isDay = isDay,
                 modifier = Modifier.padding(paddingValues)
             )
         }
@@ -93,6 +107,7 @@ fun ActivityDetailScreen(
 @Composable
 private fun ActivityDetailContent(
     activity: Activity,
+    isDay: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(
