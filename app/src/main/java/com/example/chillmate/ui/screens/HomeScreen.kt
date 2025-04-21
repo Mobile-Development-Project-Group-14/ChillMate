@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -36,8 +37,10 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.airbnb.lottie.compose.LottieAnimation
@@ -226,10 +229,17 @@ fun WeatherContent(
                         )
 
                         ImageCard(
-                            modifier = Modifier.weight(1f).padding(start = 8.dp),
                             imageRes = activities[currentSlide].imageRes,
-                            onClick = {navController.navigate("todayActivity") },
+                            onClick = { navController.navigate("todayActivity") },
                             contentDescription = activities[currentSlide].name,
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(start = 8.dp),
+                            title = activities[currentSlide].name,
+                            description = activities[currentSlide].description,
+                            showSlideIndicators = true,
+                            totalSlides = activities.size,
+                            currentSlide = currentSlide
                         )
                     }
 
