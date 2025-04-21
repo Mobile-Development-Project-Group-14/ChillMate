@@ -10,9 +10,8 @@ import androidx.compose.ui.graphics.Color
 
 object AppTheme {
     val dayColors = listOf(
-        Color(0xFFC0DEFF),  // Light blue
-        Color(0xFF74B6FF),  // Medium blue
-        Color(0xFF419BFF)   // Dark blue
+
+
     )
 
     val nightColors = listOf(
@@ -38,15 +37,15 @@ object AppTheme {
     }
 
     fun getButtonColor(day: Boolean): Color {
-        return if (day) Color(0xFF419BFF) else Color(0xFF6B4F4F)
+
     }
 
     fun getButtonTextColor(day: Boolean): Color {
-        return if (day) Color(0xFFFFFFFF) else Color(0xFF000000)
+        return if (day) Color(0xFF9E62C4) else Color(0xFF000000)
     }
 
     fun getCardColor(day: Boolean): Color {
-        return if (day) Color(0xFF74B6FF) else Color(0xFF9F6060)
+        return if (day) Color(0xFF4A1764) else Color(0xFF9F6060)
     }
 
     fun getSecondaryTextColor(day: Boolean): Color {
