@@ -102,7 +102,6 @@ fun ChillMateApp(locationPermissionLauncher: androidx.activity.result.ActivityRe
         }
 
         composable("activityDetails") {
-            // Get the activity from previous back stack entry
             val activity = navController.previousBackStackEntry?.savedStateHandle?.get<Activity>("activity")
             ActivityDetailScreen(
                 navController = navController,
