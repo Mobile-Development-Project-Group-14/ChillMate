@@ -343,7 +343,7 @@ fun getActivitySuggestions(weather: WeatherCondition): List<Activity> {
         )
 
         // ==== Hot (>30°C) ====
-        weather.temperature > 30 -> listOf(
+        weather.temperature > 31 -> listOf(
             Activity(
                 id = "desert_stars",
                 name = "Desert Stargazing",

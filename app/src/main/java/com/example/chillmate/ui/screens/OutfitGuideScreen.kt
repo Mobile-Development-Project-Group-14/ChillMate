@@ -33,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.chillmate.R
+import com.example.chillmate.model.TemperatureRange
+import com.example.chillmate.model.getTemperatureRange
 import com.example.chillmate.ui.components.ChillMateScaffold
 import com.example.chillmate.ui.theme.AppTheme
 import com.example.chillmate.viewmodel.WeatherUiState
@@ -50,7 +52,8 @@ fun OutfitGuideScreen(navController: NavController, weatherViewModel: WeatherVie
 
     val temperature = when (val state = weatherViewModel.weatherUiState) {
         is WeatherUiState.Success -> state.data.current.temperature_2m
-        else -> 20.0
+        else -> weatherViewModel.currentTemperature
+
     }
 
     ChillMateScaffold(
@@ -198,8 +201,8 @@ private fun OutfitItem(outfit: Outfit, isHighlighted: Boolean = false) {
 
 
 fun getAccessoryItems(temperature: Double): List<Outfit> {
-    return when {
-        temperature < -15 -> listOf(
+    return when(getTemperatureRange(temperature)) {
+        TemperatureRange.EXTREME_COLD -> listOf(
             Outfit("Wool Scarf", "Cozy up with a warm scarf.", R.drawable.scarf),
             Outfit("Insulated Boots", "Keep feet toasty.", R.drawable.wintershoes),
             Outfit("Wool Hat", "Trap the warmth.", R.drawable.winterhat),
@@ -209,35 +212,35 @@ fun getAccessoryItems(temperature: Double): List<Outfit> {
             Outfit("Thermal layers", "Layer up!", R.drawable.thermallayers),
             Outfit("wool socks", "Warm feet!", R.drawable.wintersocks)
         )
-        temperature in -14.0..-10.0 -> listOf(
+        TemperatureRange.VERY_COLD -> listOf(
             Outfit("Scarf", "A stylish shield from cold.", R.drawable.scarf),
             Outfit("Warm Boots", "Essential winter footwear.", R.drawable.winterboot) ,
             Outfit("Winter Jacket", "Cozy!", R.drawable.warm_winter_coat),
             Outfit("Wool Hat", "Trap the warmth.", R.drawable.winterhat),
             Outfit("Mittens", "No cold fingers here!", R.drawable.wintergloves),
         )
-        temperature in -9.9..-5.0 -> listOf(
+        TemperatureRange.COLD -> listOf(
             Outfit("Light Jacket", "A stylish shield from cold.", R.drawable.lightjacket),
             Outfit("Warm Boots", "Essential winter footwear.", R.drawable.ankle_boots) ,
             Outfit("Wool hat", "Cozy!", R.drawable.winterhat),
             Outfit("Warm sweater", "Wear a sweater inside.", R.drawable.sweater),
             Outfit("Gloves", "No cold fingers here!", R.drawable.wintergloves),
         )
-        temperature in -4.9..0.0 -> listOf(
+        TemperatureRange.CHILLY -> listOf(
             Outfit("Light Jacket", "A stylish shield from cold.", R.drawable.lightjacket),
             Outfit("Warm Boots", "Essential winter footwear.", R.drawable.ankle_boots) ,
             Outfit("scarf", "shield the wind!", R.drawable.scarf),
             Outfit("Warm sweater", "Wear a sweater inside.", R.drawable.sweater),
 
         )
-        temperature in 0.1..5.0 -> listOf(
+        TemperatureRange.COOL -> listOf(
             Outfit("Light Jacket", "A stylish shield from cold.", R.drawable.lightjacket),
             Outfit("shoes", "Essential  footwear.", R.drawable.sneakers) ,
             Outfit("Hoodie", "Beat the cold!", R.drawable.hoddie),
             Outfit("Jeans", "Wear a trendy jean.", R.drawable.jeans),
 
             )
-        temperature in 5.1..10.0 -> listOf(
+        TemperatureRange.MILD -> listOf(
             Outfit("shoes", "Essential  footwear.", R.drawable.sneakers) ,
             Outfit("Sweater", "Beat the cold!", R.drawable.sweater),
             Outfit("Hoodie", "Beat the cold!", R.drawable.hoddie),
@@ -245,33 +248,31 @@ fun getAccessoryItems(temperature: Double): List<Outfit> {
             Outfit("Jeans", "Wear a trendy jean.", R.drawable.jeans),
             Outfit("Sunglasses", "Stylish and protective.", R.drawable.sunglasses)
         )
-        temperature in 10.1..15.0 -> listOf(
+        TemperatureRange.WARM -> listOf(
             Outfit("shoes", "Essential  footwear.", R.drawable.sneakers) ,
             Outfit("long sleeve", "Beat the cold!", R.drawable.longsleeve),
             Outfit("Jeans", "Wear a trendy jean.", R.drawable.jeans),
             Outfit("Light Jacket", "A stylish jacket.", R.drawable.verylightjacket),
             Outfit("Sunglasses", "Stylish and protective.", R.drawable.sunglasses)
         )
-        temperature in 15.1..22.0 -> listOf(
+        TemperatureRange.HOT -> listOf(
             Outfit("Short", "Feel the sun.", R.drawable.shortdenim),
             Outfit("T-shirt", "Feel the sun.", R.drawable.tshirt),
             Outfit("Sandals", "Open comfort.", R.drawable.sandals),
             Outfit("Sunglasses", "Stylish and protective.", R.drawable.sunglasses),
             Outfit("Jeans", "Wear a trendy jean.", R.drawable.jeans),
         )
-        temperature in 22.1..27.0 -> listOf(
+        TemperatureRange.VERY_HOT -> listOf(
             Outfit("sun hat", "Keep the sun out of your eyes.", R.drawable.hat),
             Outfit("Short", "Feel the sun.", R.drawable.shortdenim),
             Outfit("Tank top", "Feel the sun.", R.drawable.tanktop),
             Outfit("Sandals", "Open comfort.", R.drawable.sandals),
             Outfit("Jeans", "Wear a trendy jean.", R.drawable.jeans),
-            Outfit("Sunglasses", "Stylish and protective.", R.drawable.sunglasses)
-        )
-        else -> listOf(
             Outfit("Cap", "Essential for strong sun.", R.drawable.cap),
             Outfit("Flip Flops", "Stay cool and casual.", R.drawable.flipflop),
-            Outfit("Sunglasses", "Block that bright sun.", R.drawable.sunglasses)
+            Outfit("Sunglasses", "Stylish and protective.", R.drawable.sunglasses)
         )
+
     }
 }
 
@@ -279,37 +280,35 @@ fun getAccessoryItems(temperature: Double): List<Outfit> {
 
 
 fun getOutfitSuggestions(temperature: Double): List<Outfit> {
-    return when {
-        temperature < -15 -> listOf(
+    return when (getTemperatureRange(temperature)) {
+        TemperatureRange.EXTREME_COLD  -> listOf(
             Outfit("Baby, it's cold outside! Bundle up like a pro.", "For extreme cold weather dress with a heavy winter coat, thermal layers, wool scarf, gloves, beanie, insulated boots.", R.drawable.extremecold)
         )
-        temperature in -14.0..-10.0 -> listOf(
+        TemperatureRange.VERY_COLD -> listOf(
             Outfit("Cold hands, warm heart, and a cozy winter jacket", "Stay warm in freezing temps with a winter coat, sweater, gloves, thick pants, wool socks, warm boots", R.drawable.cold3)
         )
-        temperature in -9.9..-5.0 -> listOf(
+        TemperatureRange.COLD -> listOf(
             Outfit("Cold hands, warm heart, and a cozy winter jacket", "Stay warm in freezing temps with a winter coat, sweater, gloves, thick pants, wool socks, warm boots", R.drawable.verycold)
         )
-        temperature in -4.9..0.0 -> listOf(
-            Outfit("Layer up! Cold weather is just an excuse for stylish outfits", "A good balance of warmth with a warm jacket, long sleeves, scarf, jeans, ankle boots", R.drawable.cold)
+        TemperatureRange.CHILLY -> listOf(
+            Outfit("Layer up! Cold weather is just an excuse for stylish outfits", "A good balance of warmth with a warm jacket, long sleeves, scarf, jeans, ankle boots", R.drawable.chilly)
         )
-        temperature in 0.1..5.0 -> listOf(
-            Outfit("A light jacket and a warm smile are all you need!", "A Light jacket, hoodie, jeans and sneakers are perfect for chilly days.", R.drawable.chilly)
+        TemperatureRange.COOL -> listOf(
+            Outfit("A light jacket and a warm smile are all you need!", "A Light jacket, hoodie, jeans and sneakers are perfect for chilly days.", R.drawable.cool)
         )
-        temperature in 5.1..10.0 -> listOf(
-            Outfit("Sweater weather is better weather!", "Be Cozy and stylish with a Sweater, t-shirt, jeans, light sneakers.", R.drawable.cool)
+        TemperatureRange.MILD -> listOf(
+            Outfit("Sweater weather is better weather!", "Be Cozy and stylish with a Sweater, t-shirt, jeans, light sneakers.", R.drawable.mild)
         )
-        temperature in 10.1..15.0 -> listOf(
-            Outfit("The perfect balance – not too hot, not too cold!", "Want a simple and cool option? Wear a T-shirt, light sweater, jeans or chinos, sneakers.", R.drawable.mild)
+        TemperatureRange.WARM -> listOf(
+            Outfit("The perfect balance – not too hot, not too cold!", "Want a simple and cool option? Wear a T-shirt, light sweater, jeans or chinos, sneakers.", R.drawable.warm)
         )
-        temperature in 15.1..22.0 -> listOf(
-            Outfit("Time to show off those summer vibes!", "A short-sleeve shirt, shorts, sandals or sneakers, sunglasses will keep you cool in warm weather.", R.drawable.warm)
+        TemperatureRange.HOT -> listOf(
+            Outfit("Time to show off those summer vibes!", "A short-sleeve shirt, shorts, sandals or sneakers, sunglasses will keep you cool in warm weather.", R.drawable.hot)
         )
-        temperature in 22.1..27.0 -> listOf(
-            Outfit("Sun’s out, shades on, and light clothes all day!", "Stay cool in the heat with a tank top, cotton shorts, sandals, hat, sunglasses", R.drawable.hot)
+        TemperatureRange.VERY_HOT -> listOf(
+            Outfit("Sun’s out, shades on, and light clothes all day!", "Stay cool in the heat with a tank top, cotton shorts, sandals, hat, sunglasses", R.drawable.veryhot)
         )
-        else -> listOf(
-            Outfit("Stay cool, stay hydrated, and dress for the heat!", "Loose cotton clothes, sun hat, UV-protection sunglasses, sandals are perfect for extreme heat.", R.drawable.veryhot)
-        )
+
     }
 }
 

@@ -4,6 +4,7 @@ import WeatherApiService
 import android.app.Application
 import android.location.Geocoder
 import android.os.Build
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -13,6 +14,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.chillmate.R
 import com.example.chillmate.model.WeatherData
 import com.example.chillmate.model.getOutfitImageForTemperature
+import com.example.chillmate.model.getTemperatureRange
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -146,8 +148,11 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
     fun dismissAlerts() {
         _activeAlerts.value = emptyList()
     }
+    internal var currentTemperature by mutableStateOf(0.0)
 
     private fun updateOutfitImage(temperature: Double) {
+        currentTemperature = temperature
+        val range = getTemperatureRange(temperature)
         currentOutfitImage = getOutfitImageForTemperature(temperature)
     }
 
