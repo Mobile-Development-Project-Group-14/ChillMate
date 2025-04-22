@@ -94,14 +94,18 @@ fun OutfitGuideScreen(navController: NavController, weatherViewModel: WeatherVie
                 Button(
                     onClick = { navController.navigate("shop") },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White,
-                        contentColor = AppTheme.dayColors[2]
+                        containerColor = AppTheme.transparentButtonColor,
+                        contentColor = Color.White,
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = 4.dp,
+                        pressedElevation = 2.dp
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
                 ) {
-                    Text("Stay Cozy, Click to Buy!", color = AppTheme.dayColors[2])
+                    Text("Stay Cozy, Click to Buy!", color = Color.White, fontWeight = FontWeight.Bold)
                 }
             }
         }

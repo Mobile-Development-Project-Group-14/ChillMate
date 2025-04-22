@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.chillmate.R
-import com.example.chillmate.ui.theme.ChillMateTheme
+import com.example.chillmate.ui.theme.AppTheme.ChillMateTheme
 import com.example.chillmate.ui.theme.Typography
 
 @Composable
@@ -38,7 +38,7 @@ fun ImageCard(
     currentSlide: Int = 0,
     fixedHeight: Dp? = null
 ) {
-    val aspectRatio = 2f/3f // Aspect ratio for the card
+    val aspectRatio = 2f/3f
     Box(
         modifier = modifier
             .then(if (fixedHeight != null) Modifier.height(fixedHeight) else Modifier)
@@ -54,7 +54,6 @@ fun ImageCard(
             modifier = Modifier.fillMaxSize()
         )
 
-        // Gradient overlay for text readability
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -69,7 +68,6 @@ fun ImageCard(
                 )
         )
 
-        // Content area (title and description)
         if (title != null || description != null) {
             Column(
                 modifier = Modifier
@@ -78,7 +76,6 @@ fun ImageCard(
                     .padding(12.dp),
                 verticalArrangement = Arrangement.Bottom
             ) {
-
                 description?.let {
                     Text(
                         text = it,
@@ -92,7 +89,6 @@ fun ImageCard(
             }
         }
 
-        // Slide indicators if enabled
         if (showSlideIndicators && totalSlides > 1) {
             Row(
                 modifier = Modifier
@@ -128,32 +124,25 @@ fun ImageCardPreview() {
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Basic preview
             ImageCard(
                 imageRes = R.drawable.ic_launcher_foreground,
                 onClick = {},
                 contentDescription = "Basic Preview",
                 modifier = Modifier.size(150.dp)
             )
-
-            // Preview with text content
             ImageCard(
                 imageRes = R.drawable.ic_launcher_foreground,
                 onClick = {},
                 contentDescription = "With Text Preview",
                 modifier = Modifier.size(150.dp),
                 title = "Activity Name",
-                description = "This is a sample activity description that might be a bit longer"
+                description = "Sample description"
             )
-
-            // Preview with indicators
             ImageCard(
                 imageRes = R.drawable.ic_launcher_foreground,
                 onClick = {},
-                contentDescription = "With Indicators Preview",
+                contentDescription = "With Indicators",
                 modifier = Modifier.size(150.dp),
-                title = "Activity Name",
-                description = "With slide indicators",
                 showSlideIndicators = true,
                 totalSlides = 4,
                 currentSlide = 1
