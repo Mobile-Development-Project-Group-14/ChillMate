@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -23,7 +24,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import com.example.chillmate.ui.weather.DailyForecast
+import com.example.chillmate.ui.weather.getActivitySuggestions
+import com.example.chillmate.ui.weather.getCurrentWeatherCondition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -38,6 +41,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -50,9 +54,6 @@ import com.example.chillmate.ui.LoadingScreen
 import com.example.chillmate.ui.components.ImageCard
 import com.example.chillmate.ui.theme.AppTheme.dayColors
 import com.example.chillmate.ui.theme.AppTheme.nightColors
-import com.example.chillmate.ui.weather.DailyForecast
-import com.example.chillmate.ui.weather.getActivitySuggestions
-import com.example.chillmate.ui.weather.getCurrentWeatherCondition
 import com.example.chillmate.viewmodel.AlertSeverity
 import com.example.chillmate.viewmodel.WeatherUiState
 import com.example.chillmate.viewmodel.WeatherViewModel
@@ -64,6 +65,10 @@ fun HomeScreen(
     viewModel: WeatherViewModel
 ) {
     val activeAlerts by viewModel.activeAlerts.collectAsState()
+    val isDay = when (val state = viewModel.weatherUiState) {
+        is WeatherUiState.Success -> state.data.current.is_day == 1
+        else -> true
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         when (val state = viewModel.weatherUiState) {
@@ -79,23 +84,45 @@ fun HomeScreen(
         if (activeAlerts.isNotEmpty()) {
             AlertDialog(
                 onDismissRequest = { viewModel.dismissAlerts() },
-                title = {
-                    Text(
-                        text = "Weather Alerts",
-                        style = MaterialTheme.typography.headlineMedium
-                    )
-                },
+                modifier = Modifier
+                        .padding(16.dp)
+                        .background(
+                            color = if (isDay)Color.Black.copy(alpha = 0.7f)
+                            else Color(0xFF424242).copy(alpha = 0.9f),
+                            shape = MaterialTheme.shapes.extraLarge
+                        ),
+                properties = DialogProperties(
+                    dismissOnBackPress = true,
+                    dismissOnClickOutside = true,
+                    usePlatformDefaultWidth = false
+                ),
+                shape = MaterialTheme.shapes.extraLarge,
+                containerColor = Color.Transparent,
                 text = {
                     Column(
-                        modifier = Modifier.verticalScroll(rememberScrollState())
+                        modifier = Modifier
+                            .verticalScroll(rememberScrollState())
+                            .background(
+                                color = if (isDay)MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
+                                else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.85f),
+                                shape = MaterialTheme.shapes.extraLarge
+                            )
+                            .padding(24.dp)
                     ) {
-                        activeAlerts.forEachIndexed { index, alert ->
-                            Column {
 
+                    Text(
+                        text = "Weather Alerts",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = if (isDay)MaterialTheme.colorScheme.onSurface
+                                else Color.White,
+                        modifier = Modifier.padding(bottom = 12.dp)
+                    )
+                        activeAlerts.forEachIndexed { index, alert ->
+                            Column(modifier = Modifier.padding(vertical = 8.dp)) {
                                 val color = when (alert.severity) {
-                                    AlertSeverity.SEVERE -> Color.Red
+                                    AlertSeverity.SEVERE -> MaterialTheme.colorScheme.error
                                     AlertSeverity.MODERATE -> Color(0xFFFFA500)
-                                    AlertSeverity.MINOR -> Color(0xFF006400)
+                                    AlertSeverity.MINOR -> MaterialTheme.colorScheme.tertiary
                                 }
 
                                 Text(
@@ -105,13 +132,15 @@ fun HomeScreen(
                                 )
                                 Text(
                                     text = alert.description,
-                                    modifier = Modifier.padding(bottom = 8.dp)
+                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                                    modifier = Modifier.padding(top = 4.dp)
                                 )
 
                                 if (index < activeAlerts.lastIndex) {
                                     androidx.compose.material3.HorizontalDivider(
                                         modifier = Modifier.padding(vertical = 8.dp),
-                                        color = Color.LightGray
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                                        thickness = 1.dp
                                     )
                                 }
                             }
@@ -119,11 +148,27 @@ fun HomeScreen(
                     }
                 },
                 confirmButton = {
-                    TextButton(onClick = { viewModel.dismissAlerts() }) {
-                        Text("OK")
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp)
+                            .padding(bottom = 12.dp)
+                    ) {
+                        Button(
+                            onClick = { viewModel.dismissAlerts() },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(48.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.9f),
+                                contentColor = MaterialTheme.colorScheme.onPrimary
+                            )
+                        ) {
+                            Text("Got it")
+                        }
                     }
-                },
-                modifier = Modifier.padding(16.dp)
+                }
             )
         }
     }
@@ -270,7 +315,7 @@ fun WeatherContent(
     )
 }
 
-private fun getWeatherAnimation(weatherCode: Int, isDay: Boolean): Int {
+fun getWeatherAnimation(weatherCode: Int, isDay: Boolean): Int {
     return when (weatherCode) {
         0 -> if (isDay) R.raw.day_clear_sky else R.raw.night_clear_sky
         1, 2, 3 -> if (isDay) R.raw.day_cloudy else R.raw.night_cloudy

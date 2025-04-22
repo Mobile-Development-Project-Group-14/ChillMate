@@ -32,7 +32,7 @@ import com.example.chillmate.ui.screens.OutfitGuideScreen
 import com.example.chillmate.ui.screens.ShopScreen
 import com.example.chillmate.ui.screens.TodayActivityScreen
 import com.example.chillmate.ui.screens.TravelGuideScreen
-import com.example.chillmate.ui.theme.ChillMateTheme
+import com.example.chillmate.ui.theme.AppTheme.ChillMateTheme
 import com.example.chillmate.viewmodel.TravelGuideViewModel
 import com.example.chillmate.viewmodel.WeatherViewModel
 import com.google.android.gms.location.LocationServices
