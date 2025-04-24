@@ -98,7 +98,34 @@ ChillMate requests the following permissions:
 
 ## 📸 Screenshots
 
-_Coming soon... UI previews of ChillMate in action!_
+## 🏠 Home Page Overview
+
+**ChillMate** is your intelligent weather companion that transforms raw climate data into **actionable lifestyle recommendations**. The home page acts as the **command center**, seamlessly blending *real-time GPS-powered weather updates* to enhance your daily routine.
+
+### 📍 Location & Weather Info
+- **Current location** is detected using **device GPS** and displayed via **Geocoder**.
+- Real-time weather data fetched from the **Open-Meteo API**, including:
+  - **Current temperature**
+  - **Feels-like temperature**
+- Visualized using **Lottie animations** to reflect the current weather behavior.
+
+### 📅 7-Day Weather Forecast
+- Interactive slider shows **daily and nightly temperature averages**.
+- Displays **mean daily precipitation** for each of the upcoming 7 days.
+
+### 👕 Outfit Suggestions
+- The **left side of the screen** displays **current outfit suggestions** based on temperature.
+- Tailored layering recommendations for **changing weather conditions**.
+
+### 🎯 Activity Suggestions
+- The **right side of the screen** rotates through **activity recommendations** suitable for the day’s weather.
+- Suggestions include both **indoor and outdoor** options depending on conditions.
+
+### ✈️ Travel Planner Access
+- A quick link to the **travel guide section** helps users plan future trips with weather-ready outfit tips.
+
+![Home Page](docs/Homepage.jpeg)
+
 
 ## ⚙️ Installation
 
