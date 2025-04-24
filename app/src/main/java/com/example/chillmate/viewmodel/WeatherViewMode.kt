@@ -4,7 +4,6 @@ import WeatherApiService
 import android.app.Application
 import android.location.Geocoder
 import android.os.Build
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
