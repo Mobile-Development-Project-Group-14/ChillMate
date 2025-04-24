@@ -127,6 +127,21 @@ ChillMate requests the following permissions:
 ![Home Page](docs/Homepage.jpeg)
 
 
+### 🌗 Dynamic Day & Night Theme
+
+ChillMate enhances user experience with an **adaptive color scheme** that changes automatically based on the actual **sunrise and sunset times** fetched from the weather API.
+
+- ☀️ During the day, the app displays a **bright and fresh color palette**, offering a clear and lively UI.
+- 🌙 At night, it transitions into a **softer, darker theme**, ensuring eye comfort and an immersive feel.
+
+This seamless transition is powered by real-time **sun cycle data** provided by the **Open-Meteo API**, making ChillMate not just smart—but visually aware of the time of day.
+
+#### Home Page – Day Theme
+![Home Page Day](docs/HomeDay.jpeg)
+
+#### Home Page – Night Theme
+![Home Page Night](docs/HomeNight.jpeg)
+
 ## ⚙️ Installation
 
 1. Clone the repository:
