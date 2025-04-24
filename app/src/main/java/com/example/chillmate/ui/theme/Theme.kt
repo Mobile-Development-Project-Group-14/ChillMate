@@ -12,9 +12,9 @@ import androidx.compose.ui.graphics.Color
 object AppTheme {
     // Gradient Colors (used in HomeScreen background)
     val dayColors = listOf(
-        Color(0xFF9A52C7),  // Light Purple
-        Color(0xFF58126A),  // Medium Purple
-        Color(0xFF4A1764)   // Dark Purple
+        Color(0xFFF8EDE3),  // Linen white
+        Color(0xFFE8A87C),  // Terracotta (straps/heat waves)
+        Color(0xFFA38B6D)   // Sandstone (cobblestones)
     )
 
     val nightColors = listOf(
@@ -87,27 +87,32 @@ object AppTheme {
 
     @Composable
     fun getCardColor(isDay: Boolean = isSystemInDarkTheme()): Color {
-        return if (isDay) Color.White.copy(alpha = 0.2f) else Color.White.copy(alpha = 0.1f)
+        return if (isDay) Color(0xFFF3E0D2).copy(alpha = 0.9f)  // Warm linen
+        else Color(0xFF7A5C50).copy(alpha = 0.8f)       // Muted brown
     }
 
     @Composable
     fun getTextColor(isDay: Boolean = isSystemInDarkTheme()): Color {
-        return primaryTextColor
+        return if (isDay) Color(0xFF5C4B3A)  // Deep taupe (readable on linen)
+        else Color(0xFFF5E6D2)        // Cream (soft on brown)
     }
 
     @Composable
     fun getSecondaryTextColor(isDay: Boolean = isSystemInDarkTheme()): Color {
-        return secondaryTextColor
+        return if (isDay) Color(0xFF7A6A5A)  // Muted taupe
+        else Color(0xFFD9C7B8)         // Warm gray
     }
 
     @Composable
     fun getButtonColor(isDay: Boolean): Color {
-        return if (isDay) primaryButtonColor else nightColors[1]
+        return if (isDay) Color(0xFFD49A6A)  // Rich terracotta (day)
+        else Color(0xFF9F6060)        // Medium brown (night)
     }
 
     @Composable
     fun getButtonTextColor(isDay: Boolean): Color {
-        return primaryTextColor
+        return if (isDay) Color(0xFFFFFFFF)  // White (contrasts with terracotta)
+        else Color(0xFFF5E6D2)        // Cream (soft on brown)
     }
 
     @Composable

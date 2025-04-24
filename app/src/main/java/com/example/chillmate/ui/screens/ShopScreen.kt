@@ -92,8 +92,7 @@ fun ShopScreen(navController: NavController, viewModel: WeatherViewModel) {
                                 context.startActivity(intent)
                             },
                         shape = RoundedCornerShape(16.dp),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White)
+                        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.2f))
                     ) {
                         Column(
                             horizontalAlignment = Alignment.Start,

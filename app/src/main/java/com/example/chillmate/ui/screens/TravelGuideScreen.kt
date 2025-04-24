@@ -1,5 +1,6 @@
 package com.example.chillmate.ui.screens
 
+import android.R
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -245,7 +246,9 @@ private fun DateRangePicker(
                 label = "Start Date",
                 date = selectedDates?.first,
                 isDay = isDay,
-                onClick = { showStartDatePicker = true }
+                onClick = { showStartDatePicker = true },
+
+
             )
             Spacer(modifier = Modifier.width(16.dp))
             DatePickerButton(
