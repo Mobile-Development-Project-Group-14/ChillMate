@@ -4,6 +4,7 @@ import WeatherApiService
 import android.app.Application
 import android.location.Geocoder
 import android.os.Build
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -43,6 +44,10 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
     var currentOutfitImage by mutableIntStateOf(R.drawable.mild)
         private set
 
+    //Alert state
+    private val _activeAlerts = MutableStateFlow<List<WeatherAlert>>(emptyList())
+    val activeAlerts: StateFlow<List<WeatherAlert>> = _activeAlerts
+
     init {
         fetchWeatherData()
     }
@@ -67,16 +72,17 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
                 updateOutfitImage(response.current.temperature_2m)
                 updateLocationName(currentLocation.first, currentLocation.second)
 
-                // Check for alerts after 5 seconds
-                delay(5000)
+                // RESTORED ORIGINAL BEHAVIOR WITH DELAY
+                delay(5000) // Keep this delay for proper timing
                 checkForAlerts(response)
+
             } catch (e: Exception) {
                 weatherUiState = WeatherUiState.Error
+                Log.e("WeatherAlerts", "Error fetching weather data", e)
             }
         }
     }
-    private val _activeAlerts = MutableStateFlow<List<WeatherAlert>>(emptyList())
-    val activeAlerts: StateFlow<List<WeatherAlert>> = _activeAlerts
+
 
     private suspend fun checkForAlerts(weatherData: WeatherData) {
         val alerts = mutableListOf<WeatherAlert>()
@@ -89,6 +95,8 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
             val tomorrowMax = daily.temperature_2m_max[1]
             val tempDifference = tomorrowMax - todayMax
             val absoluteDiff = abs(tempDifference)
+
+            Log.d("WeatherAlerts", "Temp diff: today=$todayMax, tomorrow=$tomorrowMax, diff=$absoluteDiff")   //****
 
             when {
                 absoluteDiff >= 10 -> alerts.add(
@@ -115,6 +123,8 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
             }
         }
 
+
+
         // Precipitation alerts (existing code)
         if (daily.precipitation_sum.size > 1) {
             val tomorrowPrecipice = daily.precipitation_sum[1]
@@ -138,11 +148,11 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
             }
         }
 
+        // Set the alerts and auto-dismiss after 5 seconds (original behavior)
         _activeAlerts.value = alerts.sortedByDescending { it.severity.ordinal }
-
-        delay(5000)
-        _activeAlerts.value = emptyList()
     }
+
+
 
     fun dismissAlerts() {
         _activeAlerts.value = emptyList()

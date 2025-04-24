@@ -85,80 +85,76 @@ fun HomeScreen(
             AlertDialog(
                 onDismissRequest = { viewModel.dismissAlerts() },
                 modifier = Modifier
-                        .padding(16.dp)
-                        .background(
-                            color = if (isDay)Color.Black.copy(alpha = 0.7f)
-                            else Color(0xFF424242).copy(alpha = 0.9f),
-                            shape = MaterialTheme.shapes.extraLarge
-                        ),
+                        .padding(16.dp),
                 properties = DialogProperties(
                     dismissOnBackPress = true,
                     dismissOnClickOutside = true,
                     usePlatformDefaultWidth = false
                 ),
                 shape = MaterialTheme.shapes.extraLarge,
-                containerColor = Color.Transparent,
+                containerColor = if (isDay) MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
+                else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.85f),
                 text = {
                     Column(
                         modifier = Modifier
-                            .verticalScroll(rememberScrollState())
                             .background(
-                                color = if (isDay)MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
+                                color = if (isDay) MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
                                 else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.85f),
                                 shape = MaterialTheme.shapes.extraLarge
                             )
-                            .padding(24.dp)
-                    ) {
-
-                    Text(
-                        text = "Weather Alerts",
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = if (isDay)MaterialTheme.colorScheme.onSurface
-                                else Color.White,
-                        modifier = Modifier.padding(bottom = 12.dp)
                     )
-                        activeAlerts.forEachIndexed { index, alert ->
-                            Column(modifier = Modifier.padding(vertical = 8.dp)) {
-                                val color = when (alert.severity) {
-                                    AlertSeverity.SEVERE -> MaterialTheme.colorScheme.error
-                                    AlertSeverity.MODERATE -> Color(0xFFFFA500)
-                                    AlertSeverity.MINOR -> MaterialTheme.colorScheme.tertiary
-                                }
+                    {
+                        Column(
+                            modifier = Modifier
+                                .verticalScroll(rememberScrollState())
+                                .padding(24.dp)
+                                .weight(1f,fill = false)
+                        ) {
 
-                                Text(
-                                    text = alert.title,
-                                    color = color,
-                                    style = MaterialTheme.typography.titleLarge
-                                )
-                                Text(
-                                    text = alert.description,
-                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
-                                    modifier = Modifier.padding(top = 4.dp)
-                                )
+                            Text(
+                                text = "Weather Alerts",
+                                style = MaterialTheme.typography.headlineSmall,
+                                color = if (isDay) MaterialTheme.colorScheme.onSurface
+                                else Color.White,
+                                modifier = Modifier.padding(bottom = 12.dp)
+                            )
+                            activeAlerts.forEachIndexed { index, alert ->
+                                Column(modifier = Modifier.padding(vertical = 8.dp)) {
+                                    val color = when (alert.severity) {
+                                        AlertSeverity.SEVERE -> MaterialTheme.colorScheme.error
+                                        AlertSeverity.MODERATE -> Color(0xFFFFA500)
+                                        AlertSeverity.MINOR -> MaterialTheme.colorScheme.tertiary
+                                    }
 
-                                if (index < activeAlerts.lastIndex) {
-                                    androidx.compose.material3.HorizontalDivider(
-                                        modifier = Modifier.padding(vertical = 8.dp),
-                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
-                                        thickness = 1.dp
+                                    Text(
+                                        text = alert.title,
+                                        color = color,
+                                        style = MaterialTheme.typography.titleLarge
                                     )
+                                    Text(
+                                        text = alert.description,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                                        modifier = Modifier.padding(top = 4.dp)
+                                    )
+
+                                    if (index < activeAlerts.lastIndex) {
+                                        androidx.compose.material3.HorizontalDivider(
+                                            modifier = Modifier.padding(vertical = 8.dp),
+                                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                                            thickness = 1.dp
+                                        )
+                                    }
+
                                 }
                             }
                         }
-                    }
-                },
-                confirmButton = {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 24.dp)
-                            .padding(bottom = 12.dp)
-                    ) {
+
                         Button(
                             onClick = { viewModel.dismissAlerts() },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(48.dp),
+                                .height(78.dp)
+                                .padding(horizontal = 24.dp, vertical = 12.dp),
                             shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.9f),
@@ -168,7 +164,8 @@ fun HomeScreen(
                             Text("Got it")
                         }
                     }
-                }
+                },
+                confirmButton = {}
             )
         }
     }
