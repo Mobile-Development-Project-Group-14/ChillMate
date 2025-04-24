@@ -136,9 +136,8 @@ ChillMate enhances user experience with an **adaptive color scheme** that change
 
 This seamless transition is powered by real-time **sun cycle data** provided by the **Open-Meteo API**, making ChillMate not just smart—but visually aware of the time of day.
 
-#### Home Page – Day Theme
-![Home Page Day](docs/DayAndNight.jpeg)
-
+#### Home Page – Day and Night Theme
+<img src="docs/DayAndNight.jpeg" alt="Home Page Day" width="700"/>
 
 
 ## ⚙️ Installation
