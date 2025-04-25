@@ -12,9 +12,9 @@ import androidx.compose.ui.graphics.Color
 object AppTheme {
     // Gradient Colors (used in HomeScreen background)
     val dayColors = listOf(
-        Color(0xFFF8EDE3),  // Linen white
-        Color(0xFFE8A87C),  // Terracotta (straps/heat waves)
-        Color(0xFFA38B6D)   // Sandstone (cobblestones)
+        Color(0xFFE0F7FA),  // Light Cyan – soft, airy background (like clear sky)
+        Color(0xFF4FC3F7),  // Sky Blue – primary element color
+        Color(0xFF0288D1)   // Deep Sky Blue – headers or stronger contrast elements
     )
 
     val nightColors = listOf(
