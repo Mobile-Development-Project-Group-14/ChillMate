@@ -11,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -92,7 +91,7 @@ fun ShopScreen(navController: NavController, viewModel: WeatherViewModel) {
                                 context.startActivity(intent)
                             },
                         shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.2f))
+                        colors = CardDefaults.cardColors(containerColor = Color.White)
                     ) {
                         Column(
                             horizontalAlignment = Alignment.Start,
@@ -111,7 +110,7 @@ fun ShopScreen(navController: NavController, viewModel: WeatherViewModel) {
                                 text = brand.description,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = AppTheme.getSecondaryTextColor(isDay),
+                                color = Color.Black,
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
                             )

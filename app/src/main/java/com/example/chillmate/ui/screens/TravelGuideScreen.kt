@@ -1,12 +1,12 @@
 package com.example.chillmate.ui.screens
 
-import android.R
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,6 +23,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -55,6 +56,8 @@ import com.example.chillmate.viewmodel.WeatherUiState
 import com.example.chillmate.viewmodel.WeatherViewModel
 import java.time.LocalDate
 import java.util.Calendar
+
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -265,7 +268,7 @@ private fun DateRangePicker(
             initialSelectedDateMillis = selectedDates?.first?.timeInMillis,
             yearRange = IntRange(today.year, maxDate.year)
         )
-        DatePickerDialog(
+        ThemedDatePickerDialog(
             onDismissRequest = { showStartDatePicker = false },
             confirmButton = {
                 TextButton(
@@ -287,10 +290,10 @@ private fun DateRangePicker(
             },
             dismissButton = {
                 TextButton(onClick = { showStartDatePicker = false }) { Text("Cancel") }
-            }
-        ) {
-            DatePicker(state = datePickerState)
-        }
+            },
+            isDay = isDay,
+            content = {DatePicker(state = datePickerState)}
+        )
     }
 
     if (showEndDatePicker) {
@@ -299,7 +302,7 @@ private fun DateRangePicker(
                 initialSelectedDateMillis = selectedDates.second.timeInMillis,
                 yearRange = IntRange(today.year, maxDate.year)
             )
-            DatePickerDialog(
+            ThemedDatePickerDialog(
                 onDismissRequest = { showEndDatePicker = false },
                 confirmButton = {
                     TextButton(
@@ -316,10 +319,10 @@ private fun DateRangePicker(
                 },
                 dismissButton = {
                     TextButton(onClick = { showEndDatePicker = false }) { Text("Cancel") }
-                }
-            ) {
-                DatePicker(state = datePickerState)
-            }
+                },
+                isDay = isDay,
+                content = { DatePicker(state = datePickerState) }
+            )
         }
     }
 }
@@ -442,6 +445,34 @@ private data class RecommendationCategory(
     val items: List<String>
 )
 
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ThemedDatePickerDialog(
+    onDismissRequest: () -> Unit,
+    confirmButton: @Composable () -> Unit,
+    dismissButton: @Composable (() -> Unit)? = null,
+    content: @Composable ColumnScope.() -> Unit,
+    isDay: Boolean,
+) {
+    DatePickerDialog(
+        onDismissRequest = onDismissRequest,
+        confirmButton = confirmButton,
+        dismissButton = dismissButton,
+        colors = AppTheme.getCalendarColors(isDay),
+        content = {
+            Column (
+                modifier = Modifier.background(
+                    if (isDay) AppTheme.lightCalendarBackground
+                    else AppTheme.darkCalendarBackground
+                )
+            ) {
+                content()
+            }
+        }
+    )
+}
+
 // Extension functions
 @RequiresApi(Build.VERSION_CODES.O)
 private fun Pair<LocalDate, LocalDate>.toCalendarPair(): Pair<Calendar, Calendar> {
@@ -458,3 +489,4 @@ private fun Pair<LocalDate, LocalDate>.toCalendarPair(): Pair<Calendar, Calendar
 private fun Calendar.toLocalDate(): LocalDate {
     return LocalDate.of(get(Calendar.YEAR), get(Calendar.MONTH) + 1, get(Calendar.DAY_OF_MONTH))
 }
+

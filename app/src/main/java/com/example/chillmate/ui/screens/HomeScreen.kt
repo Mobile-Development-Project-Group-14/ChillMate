@@ -35,6 +35,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -54,6 +55,7 @@ import com.example.chillmate.model.WeatherData
 import com.example.chillmate.ui.ErrorScreen
 import com.example.chillmate.ui.LoadingScreen
 import com.example.chillmate.ui.components.ImageCard
+import com.example.chillmate.ui.theme.AppTheme
 import com.example.chillmate.ui.theme.AppTheme.dayColors
 import com.example.chillmate.ui.theme.AppTheme.nightColors
 import com.example.chillmate.viewmodel.AlertSeverity
@@ -72,6 +74,16 @@ fun HomeScreen(
         else -> true
     }
 
+    var showAlerts by remember { mutableStateOf(false) }
+
+    // Launch effect to handle the 5-second delay
+    LaunchedEffect(viewModel.weatherUiState) {
+        if (viewModel.weatherUiState is WeatherUiState.Success) {
+            delay(5000) // Wait 5 seconds
+            showAlerts = true
+        }
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         when (val state = viewModel.weatherUiState) {
             WeatherUiState.Loading -> LoadingScreen()
@@ -83,9 +95,11 @@ fun HomeScreen(
             WeatherUiState.Error -> ErrorScreen()
         }
 
-        if (activeAlerts.isNotEmpty()) {
+        if (showAlerts && activeAlerts.isNotEmpty()) {
             AlertDialog(
-                onDismissRequest = { viewModel.dismissAlerts() },
+                onDismissRequest = {
+                    showAlerts = false
+                    viewModel.dismissAlerts() },
                 modifier = Modifier
                         .padding(16.dp),
                 properties = DialogProperties(
@@ -116,8 +130,7 @@ fun HomeScreen(
                             Text(
                                 text = "Weather Alerts",
                                 style = MaterialTheme.typography.headlineSmall,
-                                color = if (isDay) MaterialTheme.colorScheme.onSurface
-                                else Color.White,
+                                color = AppTheme.getAlertTextColor(isDay),
                                 modifier = Modifier.padding(bottom = 12.dp)
                             )
                             activeAlerts.forEachIndexed { index, alert ->
@@ -332,7 +345,7 @@ fun TravelGuideCard(
             .fillMaxWidth()
             .height(120.dp)
             .background(
-                color = Color.White.copy(alpha = 0.2f),
+                color = Color.White.copy(alpha = 0.07f),
                 shape = RoundedCornerShape(16.dp)
             )
             .clickable { onClick() }
