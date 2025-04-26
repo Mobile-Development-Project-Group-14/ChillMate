@@ -241,7 +241,7 @@ private fun DateRangePicker(
         Text(
             text = "Travel Dates",
             style = MaterialTheme.typography.titleMedium,
-            color = AppTheme.getTextColor(isDay)
+            color = Color.White
         )
         Spacer(modifier = Modifier.height(8.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -337,9 +337,11 @@ private fun DatePickerButton(
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
-            containerColor = AppTheme.getButtonColor(isDay),
+            containerColor = if (isDay)AppTheme.dayColors[1].copy(alpha = 0.5f)
+            else AppTheme.nightColors[1].copy(alpha = 0.5f),
             contentColor = AppTheme.getButtonTextColor(isDay)
         )
+
     ) {
         Text(
             text = date?.let {
@@ -463,11 +465,12 @@ private fun ThemedDatePickerDialog(
         content = {
             Column (
                 modifier = Modifier.background(
-                    if (isDay) AppTheme.lightCalendarBackground
+                    if (isDay) AppTheme.darkCalendarBackground
                     else AppTheme.darkCalendarBackground
                 )
             ) {
                 content()
+
             }
         }
     )
