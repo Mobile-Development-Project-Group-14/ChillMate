@@ -108,8 +108,8 @@ fun HomeScreen(
                     usePlatformDefaultWidth = false
                 ),
                 shape = MaterialTheme.shapes.medium,
-                containerColor = if (isDay) AppTheme.dayColors[1].copy(alpha = 0.9f)
-                else AppTheme.nightColors[1].copy(alpha = 0.85f),
+                containerColor = if (isDay) dayColors[1].copy(alpha = 0.9f)
+                else nightColors[1].copy(alpha = 0.85f),
                 text = {
                     Column(
                         //modifier = Modifier
