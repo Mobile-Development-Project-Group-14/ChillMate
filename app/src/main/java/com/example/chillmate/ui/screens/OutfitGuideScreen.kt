@@ -254,6 +254,7 @@ fun getAccessoryItems(temperature: Double): List<Outfit> {
         )
         TemperatureRange.WARM -> listOf(
             Outfit("shoes", "Essential  footwear.", R.drawable.sneakers) ,
+            Outfit("Sandals", "Open comfort.", R.drawable.sandals),
             Outfit("long sleeve", "Beat the cold!", R.drawable.longsleeve),
             Outfit("Jeans", "Wear a trendy jean.", R.drawable.jeans),
             Outfit("Light Jacket", "A stylish jacket.", R.drawable.verylightjacket),

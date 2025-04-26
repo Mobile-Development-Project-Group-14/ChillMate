@@ -2,6 +2,9 @@ package com.example.chillmate.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DatePickerColors
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -30,10 +33,50 @@ object AppTheme {
     val buttonTextColor = Color.White
 
 
+
+
     // Text Colors
     val primaryTextColor = Color(0xFFFFFFFF)         // White
     val secondaryTextColor = Color(0xB3FFFFFF)       // Semi-transparent white
     val alertTextColor = Color(0xFFFFA500)           // Orange for alerts
+
+    // colors for alerts
+    val lightAlertTextColor = Color(0xFF8B4513)  // SaddleBrown for light mode
+    val darkAlertTextColor = Color(0xFFFFA500)   // Orange for dark mode
+
+    // calendar backgrounds
+    val lightCalendarBackground = Color(0xFF1A1A1A)  // Light gray background
+    val darkCalendarBackground = Color(0xFF1A1A1A)  // Dark gray background
+    val calendarHeaderColor = Color(0xFF58126A)     // Your purple accent color
+    val calendarSelectedColor = Color(0xFF7D3C98)
+
+    @Composable
+    fun getAlertTextColor(isDay: Boolean): Color {
+        return if (isDay) lightAlertTextColor else darkAlertTextColor
+    }
+
+    @Composable
+    fun getCalendarBackground(isDay: Boolean): Color {
+        return if (isDay) lightCalendarBackground else darkCalendarBackground
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun getCalendarColors(isDay: Boolean): DatePickerColors {
+        return DatePickerDefaults.colors(
+            containerColor = if (isDay) lightCalendarBackground else darkCalendarBackground,
+            titleContentColor = if (isDay) Color.Black else Color.White,
+            headlineContentColor = if (isDay) Color.Black else Color.White,
+            weekdayContentColor = calendarHeaderColor,
+            dayContentColor = if (isDay) Color.Black else Color.White,
+            disabledDayContentColor = if (isDay) Color.LightGray else Color.DarkGray,
+            selectedDayContainerColor = calendarSelectedColor,
+            selectedDayContentColor = Color.White,
+            todayContentColor = calendarHeaderColor,
+            todayDateBorderColor = calendarHeaderColor,
+            dividerColor = calendarHeaderColor.copy(alpha = 0.5f)
+        )
+    }
 
     @Composable
     fun ChillMateTheme(
@@ -128,8 +171,8 @@ object AppTheme {
     )
 
     @Composable
-    fun getAlertColors() = ButtonDefaults.buttonColors(
+    fun getAlertColors(isDay: Boolean) = ButtonDefaults.buttonColors(
         containerColor = Color.Transparent,
-        contentColor = alertTextColor
+        contentColor = getAlertTextColor(isDay)
     )
 }
