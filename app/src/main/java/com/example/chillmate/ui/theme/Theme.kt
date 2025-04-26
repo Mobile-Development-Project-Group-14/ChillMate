@@ -1,7 +1,6 @@
 package com.example.chillmate.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePickerColors
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,26 +26,20 @@ object AppTheme {
     )
 
     // Component Colors
-    val primaryButtonColor = Color(0xFF58126A)       // Purple button (added this)
-    val secondaryButtonColor = Color(0x4D9A52C7)     // Transparent purple (added this)
     val transparentButtonColor = Color.White.copy(alpha = 0.2f)
-    val buttonTextColor = Color.White
-
-
-
 
     // Text Colors
     val primaryTextColor = Color(0xFFFFFFFF)         // White
     val secondaryTextColor = Color(0xB3FFFFFF)       // Semi-transparent white
-    val alertTextColor = Color(0xFFFFA500)           // Orange for alerts
+
 
     // colors for alerts
-    val lightAlertTextColor = Color(0xFF8B4513)  // SaddleBrown for light mode
-    val darkAlertTextColor = Color(0xFFFFA500)   // Orange for dark mode
+    val lightAlertTextColor = Color(0xFFEAEEEB)  // SaddleBrown for light mode
+    val darkAlertTextColor = Color(0xFFF1EEE9)   // Orange for dark mode
 
     // calendar backgrounds
-    val lightCalendarBackground = Color(0xFF1A1A1A)  // Light gray background
-    val darkCalendarBackground = Color(0xFF1A1A1A)  // Dark gray background
+    val lightCalendarBackground = Color(0xFF3D3B3B)  // Light gray background
+    val darkCalendarBackground = Color(0xFF1E1E1E)  // Dark gray background
     val calendarHeaderColor = Color(0xFF58126A)     // Your purple accent color
     val calendarSelectedColor = Color(0xFF7D3C98)
 
@@ -55,10 +48,6 @@ object AppTheme {
         return if (isDay) lightAlertTextColor else darkAlertTextColor
     }
 
-    @Composable
-    fun getCalendarBackground(isDay: Boolean): Color {
-        return if (isDay) lightCalendarBackground else darkCalendarBackground
-    }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -67,14 +56,14 @@ object AppTheme {
             containerColor = if (isDay) lightCalendarBackground else darkCalendarBackground,
             titleContentColor = if (isDay) Color.Black else Color.White,
             headlineContentColor = if (isDay) Color.Black else Color.White,
-            weekdayContentColor = calendarHeaderColor,
+            weekdayContentColor = if (isDay) Color(0xFF0288D1) else calendarHeaderColor, // Use your dayColors[2] for day mode
             dayContentColor = if (isDay) Color.Black else Color.White,
             disabledDayContentColor = if (isDay) Color.LightGray else Color.DarkGray,
-            selectedDayContainerColor = calendarSelectedColor,
+            selectedDayContainerColor = if (isDay) Color(0xFF4FC3F7) else calendarSelectedColor, // Use your dayColors[1] for day mode
             selectedDayContentColor = Color.White,
-            todayContentColor = calendarHeaderColor,
-            todayDateBorderColor = calendarHeaderColor,
-            dividerColor = calendarHeaderColor.copy(alpha = 0.5f)
+            todayContentColor = if (isDay) Color(0xFF0288D1) else calendarHeaderColor, // Use your dayColors[2] for day mode
+            todayDateBorderColor = if (isDay) Color(0xFF0288D1) else calendarHeaderColor, // Use your dayColors[2] for day mode
+            dividerColor = if (isDay) Color.LightGray.copy(alpha = 0.5f) else calendarHeaderColor.copy(alpha = 0.5f)
         )
     }
 
@@ -117,11 +106,7 @@ object AppTheme {
         )
     }
 
-    @Composable
-    fun getTransparentButtonColors() = ButtonDefaults.buttonColors(
-        containerColor = transparentButtonColor,
-        contentColor = buttonTextColor
-    )
+
 
     @Composable
     fun getTopBarColor(isDay: Boolean): Color {
@@ -158,21 +143,4 @@ object AppTheme {
         else Color(0xFFF5E6D2)        // Cream (soft on brown)
     }
 
-    @Composable
-    fun getButtonColors(isDay: Boolean) = ButtonDefaults.buttonColors(
-        containerColor = getButtonColor(isDay),
-        contentColor = getButtonTextColor(isDay)
-    )
-
-    @Composable
-    fun getSecondaryButtonColors() = ButtonDefaults.buttonColors(
-        containerColor = secondaryButtonColor,
-        contentColor = primaryTextColor
-    )
-
-    @Composable
-    fun getAlertColors(isDay: Boolean) = ButtonDefaults.buttonColors(
-        containerColor = Color.Transparent,
-        contentColor = getAlertTextColor(isDay)
-    )
 }

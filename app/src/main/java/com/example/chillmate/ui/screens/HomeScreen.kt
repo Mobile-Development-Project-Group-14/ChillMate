@@ -107,17 +107,17 @@ fun HomeScreen(
                     dismissOnClickOutside = true,
                     usePlatformDefaultWidth = false
                 ),
-                shape = MaterialTheme.shapes.extraLarge,
-                containerColor = if (isDay) MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
-                else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.85f),
+                shape = MaterialTheme.shapes.medium,
+                containerColor = if (isDay) dayColors[1].copy(alpha = 0.9f)
+                else nightColors[1].copy(alpha = 0.85f),
                 text = {
                     Column(
-                        modifier = Modifier
-                            .background(
+                        //modifier = Modifier
+                            /*.background(
                                 color = if (isDay) MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
                                 else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.85f),
                                 shape = MaterialTheme.shapes.extraLarge
-                            )
+                            )*/
                     )
                     {
                         Column(
@@ -172,7 +172,9 @@ fun HomeScreen(
                                 .padding(horizontal = 24.dp, vertical = 12.dp),
                             shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.9f),
+                                containerColor =
+                                    Color.White.copy(alpha = 0.3f),
+
                                 contentColor = MaterialTheme.colorScheme.onPrimary
                             )
                         ) {
