@@ -140,6 +140,23 @@ This seamless transition is powered by real-time **sun cycle data** provided by 
 <img src="docs/DayAndNight.jpeg" alt="Home Page Day" width="700"/>
 
 
+### 👕 Smart Outfit Guidance & Seamless Shopping
+
+ChillMate elevates daily outfit decisions with **personalized clothing suggestions** that adapt to real-time weather conditions and your lifestyle needs.
+
+- 👗 **Outfit Recommendations** are generated dynamically based on **temperature**, **humidity**, **wind chill**, and **precipitation** data.
+- 🧥 Provides **layering advice** for variable conditions like cold mornings and warm afternoons.
+- 🛒 **Direct shopping links** to curated stores allow users to **quickly find** and **purchase** recommended outfits and gear.
+
+This feature bridges **weather insights** with **shopping convenience**, offering a complete solution from **what to wear** to **where to buy**—all inside ChillMate.
+
+#### 🧥 Outfit Guidance  and Shopping Page
+<img src="docs/Outfit.jpeg" alt="Outfit Guidance Page" width="300"/>
+
+
+
+
+
 ## ⚙️ Installation
 
 1. Clone the repository:
