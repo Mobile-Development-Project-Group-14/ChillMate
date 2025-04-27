@@ -134,7 +134,7 @@ ChillMate enhances user experience with an **adaptive color scheme** that change
 - ☀️ During the day, the app displays a **bright and fresh color palette**, offering a clear and lively UI.
 - 🌙 At night, it transitions into a **softer, darker theme**, ensuring eye comfort and an immersive feel.
 
-This seamless transition is powered by real-time **sun cycle data** provided by the **Open-Meteo API**, making ChillMate not just smart—but visually aware of the time of day.
+This seamless transition is powered by real time **sun cycle data** provided by the **Open Meteo API**, making ChillMate not just smart—but visually aware of the time of day.
 
 #### Home Page – Day and Night Theme
 <img src="docs/DayAndNight.jpeg" alt="Home Page Day" width="700"/>
@@ -148,12 +148,36 @@ ChillMate elevates daily outfit decisions with **personalized clothing suggestio
 - 🧥 Provides **layering advice** for variable conditions like cold mornings and warm afternoons.
 - 🛒 **Direct shopping links** to curated stores allow users to **quickly find** and **purchase** recommended outfits and gear.
 
-This feature bridges **weather insights** with **shopping convenience**, offering a complete solution from **what to wear** to **where to buy**—all inside ChillMate.
+This feature bridges **weather insights** with **shopping convenience**, offering a complete solution from **what to wear** to **where to buy** all inside ChillMate.
 
 #### 🧥 Outfit Guidance  and Shopping Page
-<img src="docs/Outfit.jpeg" alt="Outfit Guidance Page" width="300"/>
+<img src="docs/Outfit.jpeg" alt="Outfit Guidance Page" width="700"/>
 
 
+### 🏃‍♂️ Weather-Based Activity Suggestions
+
+ChillMate helps users make the most of their day with **smart outdoor activity suggestions** tailored to the current weather conditions.
+
+- ☀️ On sunny days, discover activities like **hiking**, **cycling**, or **picnics**.
+- 🌧️ On rainy or cold days, get recommendations for **indoor activities** like **museum visits**, **indoor sports**, or **movie marathons**.
+- 🧠 Suggestions are based on **real-time weather parameters** such as **temperature**, **wind speed**, and **precipitation**.
+
+This feature ensures users stay **active, safe, and engaged** no matter what the weather brings.
+
+---
+
+### 📖 Detailed Activity Descriptions
+
+Every suggested activity comes with a **detailed description page** providing useful insights to help users plan better.
+
+- ℹ️ **Activity overview** with preparation tips.
+- 🎯 **Weather suitability** indicators to match current conditions.
+- 🧳 **Essential gear and clothing advice** to enjoy activities safely and comfortably.
+
+This ensures users are fully informed and ready to enjoy every experience to the fullest!
+
+#### 📚 Activity Description Page
+<img src="docs/TodayActivity.jpeg" alt="Activity Description Page" width="700"/>
 
 
 
