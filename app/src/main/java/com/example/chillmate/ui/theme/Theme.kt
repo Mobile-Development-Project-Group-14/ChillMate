@@ -133,8 +133,8 @@ object AppTheme {
 
     @Composable
     fun getButtonColor(isDay: Boolean): Color {
-        return if (isDay) Color(0xFFD49A6A)  // Rich terracotta (day)
-        else Color(0xFF9F6060)        // Medium brown (night)
+        return if (isDay) Color.White.copy(alpha = 0.3f)  // Rich terracotta (day)
+        else Color.White.copy(alpha = 0.3f)        // Medium brown (night)
     }
 
     @Composable
