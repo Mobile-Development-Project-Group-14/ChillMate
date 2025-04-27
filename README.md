@@ -180,6 +180,19 @@ This ensures users are fully informed and ready to enjoy every experience to the
 <img src="docs/TodayActivity.jpeg" alt="Activity Description Page" width="700"/>
 
 
+### ✈️ Travel Planner – Outfit Preparation for Trips
+
+ChillMate takes the stress out of packing with a **smart travel planning tool** that recommends **weather-appropriate outfits** for your trips.
+
+- 📍 Input your **travel destination** and **trip dates**.
+- 👕 Receive **personalized outfit recommendations** based on forecasted temperatures, rain chances, and wind conditions.
+- 🎒 Plan your suitcase efficiently with **packing checklists** for each day.
+
+This feature ensures that travelers are **perfectly prepared**—no surprises, no overpacking, just the right clothes for every day of the trip.
+
+#### 🌍 Travel Planner Page
+<img src="docs/TravelPlanner.jpeg" alt="Travel Planner Page" width="350"/>
+
 
 ## ⚙️ Installation
 
