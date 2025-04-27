@@ -194,6 +194,36 @@ This feature ensures that travelers are **perfectly prepared**—no surprises, n
 <img src="docs/TravelPlanner.jpeg" alt="Travel Planner Page" width="350"/>
 
 
+## 📈 Project Management and Contributions
+
+- 🗂️ **Project Board**: [View ChillMate's Project Planning Board](https://github.com/orgs/Mobile-Development-Project-Group-14/projects/1)  
+  Our project board efficiently managed **62 backlog items** throughout development:
+  - ✅ Completed **17 Features**
+  - ✅ Completed **34 Tasks**
+  - 🛠️ Fixed **11 Bugs**
+
+  Additional highlights:
+  - 📊 **Progress View** showing work completed by each assignee.
+  - 🛣️ **Roadmap** presenting all tasks completed along with their timeframes.
+
+<img src="docs/GitHubProjectBoard.jpeg" alt="Project Management" width="700"/>
+
+- 🌐 **Repository Collaboration and Network**: [View ChillMate's Repository Network](https://github.com/Mobile-Development-Project-Group-14/ChillMate/network)  
+  We maintained a **structured branching strategy** to ensure smooth collaboration:
+  - 🌿 Each member worked on their own branch: `SujeewaBranch`, `Nadeesha`, and `Hasitha`.
+  - 🔀 Development was done individually on personal branches, followed by **pull requests** for code reviews.
+  - ✅ A total of **83 pull requests** were made and reviewed by the project manager before merging into the `master` branch.
+
+  This approach provided a **hassle-free development experience**, improving our skills in:
+  - 📚 Using **GitHub Project Board** for task tracking.
+  - 🌿 Managing **branches and pull requests** for collaborative software development.
+
+  It was a valuable learning experience that enhanced our understanding of professional project workflows!
+
+
+<img src="docs/NetworkGraph.jpeg" alt="Project Management" width="700"/>
+
+
 ## ⚙️ Installation
 
 1. Clone the repository:
