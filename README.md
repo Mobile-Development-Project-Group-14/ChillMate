@@ -206,7 +206,7 @@ This feature ensures that travelers are **perfectly prepared**—no surprises, n
   - 📊 **Progress View** showing work completed by each assignee.
   - 🛣️ **Roadmap** presenting all tasks completed along with their timeframes.
 
-<img src="docs/GitHubProjectBoard.jpeg" alt="Project Management" width="700"/>
+<img src="docs/GitHubProjectBoard.jpeg" alt="Project Management" width="900"/>
 
 - 🌐 **Repository Collaboration and Network**: [View ChillMate's Repository Network](https://github.com/Mobile-Development-Project-Group-14/ChillMate/network)  
   We maintained a **structured branching strategy** to ensure smooth collaboration:
@@ -221,7 +221,7 @@ This feature ensures that travelers are **perfectly prepared**—no surprises, n
   It was a valuable learning experience that enhanced our understanding of professional project workflows!
 
 
-<img src="docs/NetworkGraph.jpeg" alt="Project Management" width="700"/>
+<img src="docs/NetworkGraph.jpeg" alt="Project Management" width="900"/>
 
 
 ## ⚙️ Installation
